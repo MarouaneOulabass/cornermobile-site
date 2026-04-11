@@ -893,5 +893,373 @@ const observer = new IntersectionObserver((entries) => {
 reveals.forEach(el => observer.observe(el));
 </script>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CHAT WIDGET — Corner Mobile Assistant                  -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<style>
+#cm-chat-fab{position:fixed;bottom:90px;right:24px;z-index:9000;width:60px;height:60px;border-radius:50%;background:var(--orange,#f97316);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(249,115,22,0.4);display:flex;align-items:center;justify-content:center;font-size:1.6rem;transition:transform .3s,box-shadow .3s}
+#cm-chat-fab:hover{transform:scale(1.08);box-shadow:0 8px 32px rgba(249,115,22,0.5)}
+#cm-chat-fab .fab-badge{position:absolute;top:-2px;right:-2px;width:20px;height:20px;background:#ef4444;border-radius:50%;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;display:none}
+#cm-chat-panel{position:fixed;bottom:24px;right:24px;z-index:9001;width:380px;max-width:calc(100vw - 32px);height:580px;max-height:calc(100dvh - 48px);background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.18);display:none;flex-direction:column;overflow:hidden;border:1px solid #e8e0d8}
+#cm-chat-panel.open{display:flex}
+.cm-header{padding:14px 16px;background:linear-gradient(135deg,#f97316,#f59e0b);color:#fff;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.cm-header-left{display:flex;align-items:center;gap:10px}
+.cm-header-avatar{width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.cm-header-info h4{font-size:.9rem;font-weight:700;margin:0}
+.cm-header-info span{font-size:.68rem;opacity:.8;display:flex;align-items:center;gap:4px}
+.cm-header-info .dot-live{width:5px;height:5px;background:#4ade80;border-radius:50%;display:inline-block}
+.cm-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.cm-close:hover{background:rgba(255,255,255,0.3)}
+.cm-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#faf8f5}
+.cm-msgs::-webkit-scrollbar{width:3px}.cm-msgs::-webkit-scrollbar-thumb{background:#e8e0d8;border-radius:3px}
+.cm-msg{display:flex;flex-direction:column;gap:2px;animation:cmIn .3s ease both}
+@keyframes cmIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cm-msg.user{align-items:flex-end}.cm-msg.ai{align-items:flex-start}
+.cm-bubble{max-width:82%;padding:10px 14px;font-size:13.5px;line-height:1.6;word-break:break-word;border-radius:14px}
+.cm-msg.user .cm-bubble{background:#f97316;color:#fff;border-radius:14px 14px 4px 14px}
+.cm-msg.ai .cm-bubble{background:#fff;border:1px solid #e8e0d8;color:#1f2937;border-radius:14px 14px 14px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.cm-bubble a{color:#f97316;text-decoration:underline}
+.cm-typing{display:flex;gap:4px;align-items:center;padding:12px 16px;background:#fff;border:1px solid #e8e0d8;border-radius:14px;width:fit-content}
+.cm-typing span{width:6px;height:6px;background:#f97316;border-radius:50%;animation:cmBounce 1.2s infinite}
+.cm-typing span:nth-child(2){animation-delay:.2s}.cm-typing span:nth-child(3){animation-delay:.4s}
+@keyframes cmBounce{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-6px);opacity:1}}
+.cm-welcome{text-align:center;padding:20px 16px}
+.cm-welcome .w-emoji{font-size:40px;display:block;margin-bottom:10px}
+.cm-welcome h3{font-size:16px;font-weight:700;margin-bottom:6px;color:#1f2937}
+.cm-welcome h3 em{color:#f97316;font-style:normal}
+.cm-welcome p{font-size:12px;color:#8c7e76;line-height:1.6}
+.cm-input-area{flex-shrink:0;padding:10px 12px 14px;background:#fff;border-top:1px solid #e8e0d8}
+.cm-suggestions{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.cm-suggestions::-webkit-scrollbar{display:none}
+.cm-sug{white-space:nowrap;padding:6px 12px;background:#faf8f5;border:1px solid #e8e0d8;border-radius:20px;font-size:11.5px;color:#8c7e76;cursor:pointer;font-family:inherit;flex-shrink:0;transition:all .2s}
+.cm-sug:hover{border-color:#f97316;color:#f97316;background:#fff7ed}
+.cm-input-row{display:flex;gap:6px;align-items:flex-end}
+.cm-input{flex:1;background:#faf8f5;border:1.5px solid #e8e0d8;border-radius:12px;padding:10px 14px;color:#1f2937;font-family:inherit;font-size:14px;outline:none;resize:none;line-height:1.4;min-height:42px;max-height:80px}
+.cm-input::placeholder{color:#b0b8c4}.cm-input:focus{border-color:#f97316}
+.cm-send{width:42px;height:42px;border-radius:12px;border:none;background:#f97316;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(249,115,22,0.3)}
+.cm-send:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.cm-send svg{width:16px;height:16px}
+@media(max-width:500px){#cm-chat-panel{width:100%;max-width:100%;height:100dvh;max-height:100dvh;bottom:0;right:0;border-radius:0}}
+</style>
+
+<button id="cm-chat-fab" onclick="cmToggle()" aria-label="Chat">
+  💬
+  <span class="fab-badge" id="cmFabBadge">1</span>
+</button>
+
+<div id="cm-chat-panel">
+  <div class="cm-header">
+    <div class="cm-header-left">
+      <div class="cm-header-avatar">📱</div>
+      <div class="cm-header-info">
+        <h4>Corner Mobile</h4>
+        <span><span class="dot-live"></span> En ligne · Assistant IA</span>
+      </div>
+    </div>
+    <button class="cm-close" onclick="cmToggle()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cm-msgs" id="cmMsgs">
+    <div class="cm-welcome" id="cmWelcome">
+      <span class="w-emoji">👋</span>
+      <h3>Bienvenue chez <em>Corner Mobile</em> !</h3>
+      <p>Smartphones, réparations, services à domicile... posez-moi vos questions !</p>
+    </div>
+  </div>
+  <div class="cm-input-area">
+    <div class="cm-suggestions" id="cmSugs">
+      <button class="cm-sug" onclick="cmQuick('Quels iPhones vous avez ?')">📱 iPhones dispo</button>
+      <button class="cm-sug" onclick="cmQuick('Prix Samsung ?')">💰 Prix Samsung</button>
+      <button class="cm-sug" onclick="cmQuick('Mon écran est cassé')">🔧 Réparation</button>
+      <button class="cm-sug" onclick="cmQuick('Service à domicile ?')">🏠 À domicile</button>
+      <button class="cm-sug" onclick="cmQuick('Où êtes-vous ?')">📍 Adresses</button>
+    </div>
+    <div class="cm-input-row">
+      <textarea class="cm-input" id="cmInput" placeholder="Votre question..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cmSend()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"></textarea>
+      <button class="cm-send" id="cmSendBtn" onclick="cmSend()">
+        <svg fill="none" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CORNER MOBILE CHAT WIDGET
+// ═══════════════════════════════════════════════════════
+
+(function() {
+
+// ── Config ──
+// Option A (prod) : URL du Worker Cloudflare — mettre votre URL ici
+// Option B (dev)  : appel direct (clé exposée — NE PAS utiliser en prod)
+const WORKER_URL = ''; // ex: 'https://corner-chat.votre-compte.workers.dev'
+const DIRECT_API_KEY = 'sk-ant-api03-GDzaaDLHDozGHOSMAO3g-qbW3Y29zgm2mDdsmfnTm1mBQ7-3z2b9mgm26mddmsTnfmmT1mBQ7docMqk0B13GHio862E8cNygvbg5Q-sk-tnapí-03-ee-xTmBFphV1Suq'; // TEMPORAIRE — migrer vers Worker
+const WHATSAPP = '+212 694432235';
+
+// ── Prix smartphones (MAJ Avril 2026) ──
+const IPHONES = [
+  {m:"iPhone 11",bl:"84-88%",pb:1800,bh:"90-95%",ph:2000},
+  {m:"iPhone 11 Pro",bl:"85-88%",pb:2300,bh:"90-95%",ph:2400},
+  {m:"iPhone 11 Pro Max",bl:"85-88%",pb:3300,bh:"90-95%",ph:3500},
+  {m:"iPhone 12",bl:"85-89%",pb:2400,bh:"90-95%",ph:2500},
+  {m:"iPhone 12 mini",bl:"85-89%",pb:1800,bh:"90-95%",ph:2000},
+  {m:"iPhone 12 Pro",bl:"86-90%",pb:3200,bh:"90-95%",ph:3400},
+  {m:"iPhone 12 Pro Max",bl:"86-90%",pb:3700,bh:"90-95%",ph:3900},
+  {m:"iPhone 13",bl:"86-90%",pb:3200,bh:"91-95%",ph:3400},
+  {m:"iPhone 13 mini",bl:"86-90%",pb:2500,bh:"91-95%",ph:2700},
+  {m:"iPhone 13 Pro 128",bl:"87-90%",pb:4000,bh:"92-96%",ph:4400},
+  {m:"iPhone 13 Pro 256",bl:"87-90%",pb:4500,bh:"92-96%",ph:4800},
+  {m:"iPhone 13 Pro Max 128",bl:"88-92%",pb:5500,bh:"93-97%",ph:5700},
+  {m:"iPhone 13 Pro Max 256",bl:"88-92%",pb:5800,bh:"93-97%",ph:6100},
+  {m:"iPhone 14 128",bl:"88-92%",pb:3600,bh:"93-97%",ph:3800},
+  {m:"iPhone 14 Plus",bl:"88-92%",pb:4400,bh:"93-97%",ph:4500},
+  {m:"iPhone 14 Pro 128",bl:"90-93%",pb:5700,bh:"95-98%",ph:5800},
+  {m:"iPhone 14 Pro 256",bl:"90-93%",pb:6200,bh:"95-98%",ph:6400},
+  {m:"iPhone 14 Pro Max 128",bl:"90-93%",pb:6400,bh:"95-98%",ph:6500},
+  {m:"iPhone 14 Pro Max 256",bl:"90-93%",pb:6800,bh:"96-99%",ph:7100},
+  {m:"iPhone 15 128",bl:"90-94%",pb:4800,bh:"95-100%",ph:5000,neuf:6800},
+  {m:"iPhone 15 Plus",bl:"91-95%",pb:6100,bh:"96-100%",ph:6400},
+  {m:"iPhone 15 Pro 128",bl:"92-95%",pb:6700,bh:"97-100%",ph:6900},
+  {m:"iPhone 15 Pro 256",bl:"92-95%",pb:7300,bh:"97-100%",ph:7600},
+  {m:"iPhone 15 Pro Max 256",bl:"92-95%",pb:7900,bh:"97-100%",ph:8500},
+  {m:"iPhone 16 128",bl:"94-97%",pb:6000,bh:"98-100%",ph:6500,neuf:"7300-7500"},
+  {m:"iPhone 16 Plus",bl:"94-97%",pb:6800,bh:"98-100%",ph:7000,neuf:"8000-8200"},
+  {m:"iPhone 16 Pro 128",bl:"95-98%",pb:8000,bh:"99-100%",ph:8200},
+  {m:"iPhone 16 Pro Max 256",bl:"95-98%",pb:9500,bh:"99-100%",ph:10200,neuf:12500},
+  {m:"iPhone 17 256",bl:"98-99%",pb:9600,bh:"100%",ph:9700},
+];
+
+const ANDROIDS = [
+  {marque:"Honor",m:"200",pb:3200,ph:3800},{marque:"Honor",m:"70",pb:1800,ph:2200},{marque:"Honor",m:"90",pb:2600,ph:3100},
+  {marque:"Infinix",m:"Note 30",pb:1100,ph:1400},{marque:"Infinix",m:"Zero 30",pb:1800,ph:2200},
+  {marque:"Nothing",m:"Phone 1",pb:2400,ph:2800},{marque:"Nothing",m:"Phone 2",pb:3400,ph:4000},
+  {marque:"OnePlus",m:"10",pb:2600,ph:3100},{marque:"OnePlus",m:"11",pb:3400,ph:4000},{marque:"OnePlus",m:"9",pb:2000,ph:2400},
+  {marque:"Oppo",m:"Reno 10",pb:1900,ph:2300},{marque:"Oppo",m:"Reno 10 Pro",pb:2200,ph:2600},{marque:"Oppo",m:"Reno 11",pb:2300,ph:2800},{marque:"Oppo",m:"Reno 11 Pro",pb:2600,ph:3200},{marque:"Oppo",m:"Reno 12",pb:2400,ph:3000},{marque:"Oppo",m:"Reno 13",pb:2600,ph:3300},{marque:"Oppo",m:"Reno 8",pb:2400,ph:2800},{marque:"Oppo",m:"Reno 9",pb:2600,ph:3100},
+  {marque:"Poco",m:"F3",pb:1500,ph:1800},{marque:"Poco",m:"F4",pb:1800,ph:2200},{marque:"Poco",m:"F5",pb:2600,ph:3100},{marque:"Poco",m:"X3 Pro",pb:900,ph:1200},{marque:"Poco",m:"X4 Pro",pb:1200,ph:1500},{marque:"Poco",m:"X5",pb:1400,ph:1700},{marque:"Poco",m:"X6",pb:1800,ph:2200},
+  {marque:"Redmi",m:"Note 12",pb:1000,ph:1300},{marque:"Redmi",m:"Note 12 Pro",pb:1500,ph:1900},{marque:"Redmi",m:"Note 13",pb:1200,ph:1600},{marque:"Redmi",m:"Note 13 Pro",pb:1800,ph:2300},{marque:"Redmi",m:"Note 13 Pro+",pb:2200,ph:2800},{marque:"Redmi",m:"Note 14",pb:1400,ph:1700},{marque:"Redmi",m:"Note 14 Pro",pb:1800,ph:2300},{marque:"Redmi",m:"Note 14 Pro+",pb:2600,ph:3200},
+  {marque:"Samsung",m:"A52",pb:1200,ph:1400},{marque:"Samsung",m:"A52s",pb:1300,ph:1500},{marque:"Samsung",m:"A53",pb:1500,ph:1700},{marque:"Samsung",m:"A54",pb:1800,ph:2100},{marque:"Samsung",m:"A55",pb:2400,ph:2800},
+  {marque:"Samsung",m:"S20 FE",pb:1500,ph:1800},{marque:"Samsung",m:"S21 FE",pb:2200,ph:2600},{marque:"Samsung",m:"S22 FE",pb:2800,ph:3300},{marque:"Samsung",m:"S23",pb:3900,ph:4400},{marque:"Samsung",m:"S23 FE",pb:3600,ph:4200},{marque:"Samsung",m:"S23 Plus",pb:4500,ph:5000},{marque:"Samsung",m:"S23 Ultra",pb:6000,ph:6900},
+  {marque:"Samsung",m:"S24",pb:3800,ph:4800},{marque:"Samsung",m:"S24 FE",pb:4200,ph:4800},{marque:"Samsung",m:"S24 Plus",pb:4200,ph:5800},{marque:"Samsung",m:"S24 Ultra",pb:6900,ph:8300},
+  {marque:"Samsung",m:"S25",pb:4200,ph:5200},{marque:"Samsung",m:"S25 FE",pb:4500,ph:5200},{marque:"Samsung",m:"S25 Plus",pb:5200,ph:6500},{marque:"Samsung",m:"S25 Ultra",pb:7800,ph:8400},
+  {marque:"Samsung",m:"Z Flip 3",pb:2800,ph:3200},{marque:"Samsung",m:"Z Flip 4",pb:3400,ph:3800},{marque:"Samsung",m:"Z Flip 5",pb:4200,ph:4800},
+  {marque:"Samsung",m:"Z Fold 3",pb:4200,ph:4800},{marque:"Samsung",m:"Z Fold 4",pb:5200,ph:6000},{marque:"Samsung",m:"Z Fold 5",pb:6500,ph:7500},
+];
+
+const REPAIRS = `RÉPARATIONS (prix indicatifs, diagnostic gratuit):
+📱 Écran iPhone SE/6/6S: 200-280 MAD | iPhone 7/8: 280-350 | iPhone X/XS/XR: 380-500 | iPhone 11: 400-550 | iPhone 12: 550-700 | iPhone 12 Pro: 650-800 | iPhone 13: 600-750 | iPhone 13 Pro: 700-900 | iPhone 14: 750-950 | iPhone 14 Pro: 900-1100 | iPhone 15: 800-1000
+📱 Écran Samsung A14-A34: 280-420 | A54/A73: 400-550 | S22/S23: 550-750 | S23+/Ultra: 700-950
+📱 Écran Xiaomi Redmi Note 11/12: 250-380 | Note 12 Pro: 320-450
+🔋 Batterie iPhone SE-7: 150-200 | 8-XR: 180-250 | 11: 200-270 | 12: 250-320 | 13: 270-340 | 14/15: 300-380
+🔋 Batterie Samsung A-series: 150-250 | S22/S23: 280-400
+🔌 Connecteur charge iPhone Lightning: 150-250 | USB-C: 200-300 | Samsung/Xiaomi: 130-280
+🔊 Haut-parleur: 150-280 | 🎙️ Micro: 120-220
+📷 Caméra arrière iPhone SE-11: 300-500 | 12-15: 450-700 | Samsung A: 280-450 | S: 400-650
+🪟 Vitre arrière iPhone 8/SE2: 200-300 | 11-15: 350-600
+🔐 Face ID/Touch ID: diagnostic en boutique obligatoire
+💧 Dégât des eaux: devis après ouverture`;
+
+const SERVICES = `SERVICES À DOMICILE (Rabat, Salé, Témara):
+• Remplacement écran iPhone: 200-800 MAD | 30-60 min | À domicile ✅
+• Remplacement écran Samsung: 200-600 MAD | 30-60 min | À domicile ✅
+• Remplacement batterie: 150-400 MAD | 20-30 min | À domicile ✅
+• Transfert de données: 100-200 MAD | 30-60 min | À domicile ✅
+• Configuration téléphone neuf: 50-100 MAD | 15-30 min | À domicile ✅
+• Récupération données: 200-500 MAD | 1-3h | En boutique uniquement
+• Déblocage opérateur: 100-300 MAD | 15-30 min | À domicile ✅
+• Film protection: 50-150 MAD | 10 min | À domicile ✅
+• Diagnostic complet: 50 MAD | 15 min | À domicile ✅
+Zones: Rabat, Salé, Témara, Hay Riad, Agdal, Hassan, Océan
+Déplacement: Gratuit dans Rabat, 50 MAD Salé/Témara
+Horaires: Lundi-Samedi 9h-20h`;
+
+// ── Build catalogue text ──
+function buildCatalogue() {
+  let txt = 'CATALOGUE SMARTPHONES (prix en MAD, occasion sauf mention "neuf"):\n\n';
+  txt += '── iPhone ──\n';
+  IPHONES.forEach(p => {
+    txt += `${p.m}: ${p.pb}-${p.ph} MAD (batterie ${p.bl} → ${p.bh})`;
+    if (p.neuf) txt += ` | Neuf: ${p.neuf} MAD`;
+    txt += '\n';
+  });
+  txt += '\n── Android ──\n';
+  const byBrand = {};
+  ANDROIDS.forEach(p => { (byBrand[p.marque] = byBrand[p.marque] || []).push(p); });
+  for (const [brand, items] of Object.entries(byBrand)) {
+    items.forEach(p => { txt += `${brand} ${p.m}: ${p.pb}-${p.ph} MAD\n`; });
+  }
+  return txt;
+}
+
+function buildSystemPrompt() {
+  return `Tu es l'assistant commercial en ligne de Corner Mobile, une boutique de smartphones à Rabat, Maroc.
+
+PERSONNALITÉ:
+- Chaleureux, drôle, commercial, convaincant
+- Tu parles comme un vrai vendeur marocain sympathique
+- Tu utilises des emojis avec parcimonie mais efficacement
+- Tu t'adaptes à la langue du client: Français, Darija, Arabe, Anglais
+- Tu finis TOUJOURS par une invitation: venir en boutique OU WhatsApp (${WHATSAPP})
+
+BOUTIQUES:
+- M1: Centre Commercial Aït Baha, Rabat
+- M2: Centre Commercial Oued Dahab (9isaria), Rabat
+- Horaires: Lundi-Samedi 9h-20h, Dimanche 10h-18h
+
+${buildCatalogue()}
+${REPAIRS}
+
+${SERVICES}
+
+RÈGLES:
+1. Ne JAMAIS donner de prix de revient ou de marge
+2. Les prix dépendent de l'état de la batterie — explique les deux fourchettes si on demande
+3. Réponses entre 2 et 6 lignes maximum
+4. Si un produit n'est pas dans le catalogue, dis "Je vérifie pour vous" et propose des alternatives
+5. Si on te demande des trucs hors sujet — ramène la conversation aux téléphones avec humour
+6. Pour les réparations: donne la fourchette + "diagnostic gratuit" + propose TOUJOURS le domicile
+7. Ne pose JAMAIS plus d'une question à la fois
+8. Si le client mentionne un problème, demande QUEL téléphone (marque + modèle)`;
+}
+
+// ── State ──
+let cmHistory = [];
+let cmLoading = false;
+let cmOpen = false;
+let cmGreeted = false;
+let cmLastSend = 0;
+
+// ── Toggle ──
+window.cmToggle = function() {
+  cmOpen = !cmOpen;
+  document.getElementById('cm-chat-panel').classList.toggle('open', cmOpen);
+  document.getElementById('cm-chat-fab').style.display = cmOpen ? 'none' : '';
+  if (cmOpen && !cmGreeted) {
+    cmGreeted = true;
+    setTimeout(() => cmAddMsg('ai', 'Salam ! 👋 Bienvenue chez Corner Mobile ! Comment je peux vous aider ? Smartphones, réparations, services à domicile... je suis là pour vous ! 😊'), 500);
+  }
+  if (cmOpen) document.getElementById('cmInput').focus();
+};
+
+// ── Add message ──
+function cmAddMsg(role, text) {
+  const c = document.getElementById('cmMsgs');
+  const w = document.getElementById('cmWelcome');
+  if (w) w.remove();
+  const m = document.createElement('div');
+  m.className = 'cm-msg ' + role;
+  const b = document.createElement('div');
+  b.className = 'cm-bubble';
+  // Sanitize & format
+  let safe = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  safe = safe.replace(/(\d{3,6}\s*MAD)/g, '<strong style="color:#f97316">$1</strong>');
+  safe = safe.replace(/\n/g, '<br>');
+  safe = safe.replace(/(\+212[\s\d]+\d)/g, function(match) {
+    const clean = match.replace(/\s/g, '');
+    return '<a href="https://wa.me/' + clean.replace('+', '') + '" target="_blank">' + match + '</a>';
+  });
+  b.innerHTML = safe;
+  m.appendChild(b);
+  c.appendChild(m);
+  c.scrollTop = c.scrollHeight;
+  setTimeout(() => c.scrollTop = c.scrollHeight, 50);
+}
+
+function cmShowTyping() {
+  const c = document.getElementById('cmMsgs');
+  const t = document.createElement('div');
+  t.className = 'cm-msg ai'; t.id = 'cmTyping';
+  t.innerHTML = '<div class="cm-typing"><span></span><span></span><span></span></div>';
+  c.appendChild(t); c.scrollTop = c.scrollHeight;
+}
+function cmHideTyping() { const t = document.getElementById('cmTyping'); if (t) t.remove(); }
+
+// ── Send ──
+window.cmSend = async function(text) {
+  const input = document.getElementById('cmInput');
+  const msg = text || input.value.trim();
+  if (!msg || cmLoading) return;
+
+  // Rate limit: 1 msg per 2 seconds
+  if (Date.now() - cmLastSend < 2000) return;
+  cmLastSend = Date.now();
+
+  input.value = ''; input.style.height = 'auto';
+  cmLoading = true;
+  document.getElementById('cmSendBtn').disabled = true;
+  cmAddMsg('user', msg);
+  cmHistory.push({ role: 'user', content: msg });
+
+  // Hide suggestions after first message
+  const sugs = document.getElementById('cmSugs');
+  if (sugs) sugs.style.display = 'none';
+
+  cmShowTyping();
+
+  try {
+    let data;
+    const payload = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 800,
+      system: buildSystemPrompt(),
+      messages: cmHistory.slice(-14)
+    };
+
+    if (WORKER_URL) {
+      // Production: via Worker (clé côté serveur)
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      data = await res.json();
+    } else {
+      // Dev fallback: appel direct (clé exposée)
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': DIRECT_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify(payload)
+      });
+      data = await res.json();
+    }
+
+    cmHideTyping();
+    if (data.error) {
+      const errMsg = data.error.type === 'rate_limit_error'
+        ? 'Trop de messages ! 😅 Attendez quelques secondes.'
+        : 'Petit souci technique ! Contactez-nous sur WhatsApp: ' + WHATSAPP;
+      cmAddMsg('ai', errMsg);
+    } else {
+      const reply = data.content[0].text;
+      cmHistory.push({ role: 'assistant', content: reply });
+      if (cmHistory.length > 16) cmHistory = cmHistory.slice(-12);
+      cmAddMsg('ai', reply);
+    }
+  } catch (e) {
+    cmHideTyping();
+    cmAddMsg('ai', 'Problème de connexion ! 😅 Contactez-nous sur WhatsApp: ' + WHATSAPP);
+  }
+  cmLoading = false;
+  document.getElementById('cmSendBtn').disabled = false;
+};
+
+window.cmQuick = function(t) { cmSend(t); };
+
+// ── Auto-open after 8 seconds ──
+setTimeout(() => {
+  if (!cmOpen) {
+    const badge = document.getElementById('cmFabBadge');
+    badge.style.display = 'flex';
+  }
+}, 8000);
+
+})();
+</script>
+
 </body>
 </html>
