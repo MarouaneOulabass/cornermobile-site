@@ -1072,12 +1072,13 @@ Zones: Rabat, Salé, Témara, Hay Riad, Agdal, Hassan, Océan
 Déplacement: Gratuit dans Rabat, 50 MAD Salé/Témara
 Horaires: Lundi-Samedi 9h-20h`;
 
-// ── Build catalogue text ──
+// ── Build catalogue text (prix "à partir de" = moyenne des deux fourchettes) ──
 function buildCatalogue() {
   let txt = 'CATALOGUE SMARTPHONES (prix en MAD, occasion sauf mention "neuf"):\n\n';
   txt += '── iPhone ──\n';
   IPHONES.forEach(p => {
-    txt += `${p.m}: ${p.pb}-${p.ph} MAD (batterie ${p.bl} → ${p.bh})`;
+    const avg = Math.round((p.pb + p.ph) / 2 / 100) * 100; // arrondi à la centaine
+    txt += `${p.m}: à partir de ${avg} MAD`;
     if (p.neuf) txt += ` | Neuf: ${p.neuf} MAD`;
     txt += '\n';
   });
@@ -1085,7 +1086,10 @@ function buildCatalogue() {
   const byBrand = {};
   ANDROIDS.forEach(p => { (byBrand[p.marque] = byBrand[p.marque] || []).push(p); });
   for (const [brand, items] of Object.entries(byBrand)) {
-    items.forEach(p => { txt += `${brand} ${p.m}: ${p.pb}-${p.ph} MAD\n`; });
+    items.forEach(p => {
+      const avg = Math.round((p.pb + p.ph) / 2 / 100) * 100;
+      txt += `${brand} ${p.m}: à partir de ${avg} MAD\n`;
+    });
   }
   return txt;
 }
@@ -1112,7 +1116,7 @@ ${SERVICES}
 
 RÈGLES:
 1. Ne JAMAIS donner de prix de revient ou de marge
-2. Les prix dépendent de l'état de la batterie — explique les deux fourchettes si on demande
+2. Quand on te demande un prix smartphone, dis "à partir de X MAD" (le prix indiqué dans le catalogue). Le prix final dépend de l'état et de la batterie — invite le client à venir vérifier en boutique ou à nous contacter sur WhatsApp pour le prix exact
 3. Réponses entre 2 et 6 lignes maximum
 4. Si un produit n'est pas dans le catalogue, dis "Je vérifie pour vous" et propose des alternatives
 5. Si on te demande des trucs hors sujet — ramène la conversation aux téléphones avec humour
