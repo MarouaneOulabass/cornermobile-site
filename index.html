@@ -1074,10 +1074,10 @@ Horaires: Lundi-Samedi 9h-20h`;
 
 // ── Build catalogue text (prix "à partir de" = moyenne des deux fourchettes) ──
 function buildCatalogue() {
-  let txt = 'CATALOGUE SMARTPHONES (prix en MAD, occasion sauf mention "neuf"):\n\n';
+  let txt = 'CATALOGUE SMARTPHONES (prix en MAD):\n\n';
   txt += '── iPhone ──\n';
   IPHONES.forEach(p => {
-    const avg = Math.round((p.pb + p.ph) / 2 / 100) * 100; // arrondi à la centaine
+    const avg = Math.round((p.pb + p.ph) / 2 / 100) * 100;
     txt += `${p.m}: à partir de ${avg} MAD`;
     if (p.neuf) txt += ` | Neuf: ${p.neuf} MAD`;
     txt += '\n';
@@ -1105,8 +1105,8 @@ PERSONNALITÉ:
 - Tu finis TOUJOURS par une invitation: venir en boutique OU WhatsApp (${WHATSAPP})
 
 BOUTIQUES:
-- M1: Centre Commercial Aït Baha, Rabat
-- M2: Centre Commercial Oued Dahab (9isaria), Rabat
+- Centre Commercial Aït Baha, Rabat
+- Centre Commercial Oued Dahab (9isaria), Rabat
 - Horaires: Lundi-Samedi 9h-20h, Dimanche 10h-18h
 
 ${buildCatalogue()}
@@ -1116,13 +1116,14 @@ ${SERVICES}
 
 RÈGLES:
 1. Ne JAMAIS donner de prix de revient ou de marge
-2. Quand on te demande un prix smartphone, dis "à partir de X MAD" (le prix indiqué dans le catalogue). Le prix final dépend de l'état et de la batterie — invite le client à venir vérifier en boutique ou à nous contacter sur WhatsApp pour le prix exact
-3. Réponses entre 2 et 6 lignes maximum
-4. Si un produit n'est pas dans le catalogue, dis "Je vérifie pour vous" et propose des alternatives
-5. Si on te demande des trucs hors sujet — ramène la conversation aux téléphones avec humour
-6. Pour les réparations: donne la fourchette + "diagnostic gratuit" + propose TOUJOURS le domicile
-7. Ne pose JAMAIS plus d'une question à la fois
-8. Si le client mentionne un problème, demande QUEL téléphone (marque + modèle)`;
+2. Quand on te demande un prix smartphone, dis "à partir de X MAD" (le prix indiqué dans le catalogue). Invite le client à venir en boutique ou à nous contacter sur WhatsApp pour le prix exact selon le modèle et le stockage
+3. Ne JAMAIS mentionner l'état de la batterie, le pourcentage de batterie, ni parler de "batterie restaurée/changée/reconditionnée". Présenter les téléphones comme étant simplement en excellent état
+4. Réponses entre 2 et 6 lignes maximum
+5. Si un produit n'est pas dans le catalogue, dis "Je vérifie pour vous" et propose des alternatives
+6. Si on te demande des trucs hors sujet — ramène la conversation aux téléphones avec humour
+7. Pour les réparations: donne la fourchette + "diagnostic gratuit" + propose TOUJOURS le domicile
+8. Ne pose JAMAIS plus d'une question à la fois
+9. Si le client mentionne un problème, demande QUEL téléphone (marque + modèle)`;
 }
 
 // ── State ──
