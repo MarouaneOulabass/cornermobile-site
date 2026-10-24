@@ -13,9 +13,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import MissionContext, get_owned
-from app.domain.enums import TargetType, ValidationStatus
+from app.domain.enums import MissionStatus, TargetType, ValidationStatus
 from app.models import (
     Assumption,
+    AuditMission,
     Comment,
     Evidence,
     EvidenceLink,
@@ -176,6 +177,10 @@ def apply_review(
         user_name=ctx.user.full_name,
     )
     db.add(record)
+    mission = db.get(AuditMission, ctx.mission_id)
+    if mission is not None and mission.status == MissionStatus.published:
+        # The published snapshot stays frozen for the client; the live report is a draft again.
+        mission.status = MissionStatus.review
     audit_log.record(
         db,
         "review",

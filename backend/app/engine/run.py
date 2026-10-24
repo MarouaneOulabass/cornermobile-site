@@ -17,6 +17,7 @@ from app.engine.opportunities import generate
 from app.engine.opportunity_store import persist_opportunities
 from app.engine.organization import persist_organization, persist_processes
 from app.engine.pain_points import persist_findings
+from app.engine.recommendations import persist_recommendations
 from app.engine.roadmap import persist_roadmap
 from app.models import AuditMission, Evidence
 from app.models.base import utcnow
@@ -59,6 +60,7 @@ def run_analysis(db: Session, mission: AuditMission, on_step: Step | None = None
 
     report("Roadmap", 6)
     summary["roadmap_items"] = len(persist_roadmap(db, mission))
+    summary["recommendations"] = len(persist_recommendations(db, mission))
 
     mission.analysis_version += 1
     mission.analyzed_at = utcnow()

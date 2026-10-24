@@ -4,11 +4,18 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import analysis, auth, documents, findings, missions, opportunities, orgs, roadmap
+from app.api.routes import analysis, auth, documents, findings, missions, opportunities, orgs, report, roadmap
 from app.config import get_settings
 from app.security import configure_logging
 
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+# The web app proxies /api without adding its own headers, so the API sets them. Routes may override
+# (the report preview allows same-origin framing).
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "same-origin",
+}
 
 
 def create_app() -> FastAPI:
@@ -35,13 +42,16 @@ def create_app() -> FastAPI:
             and request.headers.get("x-requested-with") != "auditflow"
         ):
             return JSONResponse({"detail": "En-tête X-Requested-With manquant"}, status_code=403)
-        return await call_next(request)
+        response = await call_next(request)
+        for key, value in SECURITY_HEADERS.items():
+            response.headers.setdefault(key, value)
+        return response
 
     @app.get("/api/health")
     def health() -> dict:
         return {"status": "ok"}
 
-    for module in (auth, orgs, missions, documents, analysis, findings, opportunities, roadmap):
+    for module in (auth, orgs, missions, documents, analysis, findings, opportunities, roadmap, report):
         app.include_router(module.router, prefix="/api")
     return app
 

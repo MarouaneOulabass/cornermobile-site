@@ -25,7 +25,14 @@ async function request<T>(method: string, path: string, body?: Json | FormData):
   const data = res.headers.get("content-type")?.includes("application/json") ? await res.json() : null;
   if (!res.ok) {
     const detail = data?.detail;
-    const message = typeof detail === "string" ? detail : Array.isArray(detail) ? detail.map((d) => d.msg).join(", ") : res.statusText;
+    const message =
+      typeof detail === "string"
+        ? detail
+        : Array.isArray(detail)
+          ? detail.map((d) => d.msg).join(", ")
+          : typeof detail?.message === "string"
+            ? detail.message
+            : res.statusText;
     throw new ApiError(res.status, message || `Erreur ${res.status}`);
   }
   return data as T;

@@ -492,3 +492,34 @@ export interface Roadmap {
   phases: { key: string; label: string; title: string; start_week: number; end_week: number }[];
   value_by_phase: Record<string, number>;
 }
+
+export interface Recommendation {
+  id: string;
+  title: string;
+  text: string;
+  ordinal: number;
+  opportunity_id: string | null;
+  validation_status: ValidationStatus;
+  edited_fields: string[];
+  generated: { key?: string; title?: string; text?: string; stale?: boolean };
+}
+
+export interface ReportExport {
+  id: string;
+  format: "pdf" | "html";
+  size_bytes: number;
+  sha256: string;
+  analysis_version: number;
+  published: boolean;
+  created_at: string;
+}
+
+export interface PublicationCheck {
+  analyzed: boolean;
+  published_at: string | null;
+  published_version: number | null;
+  analysis_version: number;
+  unreviewed: Record<"pain_points" | "opportunities" | "assumptions" | "recommendations", number>;
+  contested: number;
+  ready: boolean;
+}

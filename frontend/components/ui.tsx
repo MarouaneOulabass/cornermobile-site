@@ -24,21 +24,21 @@ export function Pill({ tone = "neutral", children, className, title }: { tone?: 
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "default" | "ghost" | "danger"; size?: "sm" | "md" };
 
-export function Button({ variant = "default", size = "md", className, ...props }: ButtonProps) {
-  return (
-    <button
-      {...props}
-      className={clsx(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg border font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
-        size === "sm" ? "px-2.5 py-1.5 text-xs" : "px-3.5 py-2 text-sm",
-        variant === "primary" && "border-info bg-info text-white hover:bg-blue-700",
-        variant === "default" && "border-line bg-white text-ink hover:bg-gray-50",
-        variant === "ghost" && "border-transparent bg-transparent text-ink hover:bg-gray-100",
-        variant === "danger" && "border-risk bg-white text-risk hover:bg-risk-soft",
-        className,
-      )}
-    />
+/** Button styling, shared with links that look like buttons (downloads, new tabs). */
+export function buttonClasses(variant: ButtonProps["variant"] = "default", size: ButtonProps["size"] = "md", className?: string) {
+  return clsx(
+    "inline-flex items-center justify-center gap-1.5 rounded-lg border font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+    size === "sm" ? "px-2.5 py-1.5 text-xs" : "px-3.5 py-2 text-sm",
+    variant === "primary" && "border-info bg-info text-white hover:bg-blue-700",
+    variant === "default" && "border-line bg-white text-ink hover:bg-gray-50",
+    variant === "ghost" && "border-transparent bg-transparent text-ink hover:bg-gray-100",
+    variant === "danger" && "border-risk bg-white text-risk hover:bg-risk-soft",
+    className,
   );
+}
+
+export function Button({ variant = "default", size = "md", className, ...props }: ButtonProps) {
+  return <button {...props} className={buttonClasses(variant, size, className)} />;
 }
 
 export function Card({ children, className, title, action }: { children: ReactNode; className?: string; title?: ReactNode; action?: ReactNode }) {

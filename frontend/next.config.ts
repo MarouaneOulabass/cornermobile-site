@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     return [{ source: "/api/:path*", destination: `${apiUrl}/api/:path*` }];
   },
   async headers() {
+    // Pages only: proxied /api responses carry the API's own security headers.
     return [
       {
         source: "/:path*",

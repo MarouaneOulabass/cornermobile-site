@@ -346,3 +346,49 @@ class RoadmapItemIn(BaseModel):
     owner: str | None = None
     kind: Literal["quick_win", "pilote", "industrialisation", "projet", "socle"] = "socle"
     opportunity_id: uuid.UUID | None = None
+
+
+class ExportIn(BaseModel):
+    format: Literal["pdf", "html"] = "pdf"
+
+
+class ExportOut(ORM):
+    id: uuid.UUID
+    format: str
+    size_bytes: int
+    sha256: str
+    analysis_version: int
+    published: bool
+    created_at: datetime
+
+
+class PublicationCheck(BaseModel):
+    """What is still unreviewed before publication (spec §1.11: consultant validates every conclusion)."""
+
+    analyzed: bool
+    published_at: datetime | None
+    published_version: int | None
+    analysis_version: int
+    unreviewed: dict[str, int]
+    contested: int
+    ready: bool
+
+
+class PublishIn(BaseModel):
+    acknowledge_unreviewed: bool = False
+
+
+class PublishOut(BaseModel):
+    published_at: datetime | None
+    exports: list[ExportOut]
+
+
+class RecommendationOut(ORM):
+    id: uuid.UUID
+    title: str
+    text: str
+    ordinal: int
+    opportunity_id: uuid.UUID | None
+    validation_status: str
+    edited_fields: list[str]
+    generated: dict
