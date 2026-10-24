@@ -132,6 +132,22 @@ def apply_review(
         and changes["nature"] not in ("fait", "calcul", "hypothese")
     ):
         raise HTTPException(422, "Nature invalide")
+    if target_type == TargetType.roadmap_item:
+        from app.engine.roadmap import PHASE_WEEKS, phase_for_week
+
+        if "phase" in changes and changes["phase"] not in PHASE_WEEKS:
+            raise HTTPException(422, "Phase inconnue")
+        if (
+            "phase" in changes
+            and "start_week" not in changes
+            and phase_for_week(item.start_week) != changes["phase"]
+        ):
+            changes = {**changes, "start_week": PHASE_WEEKS[changes["phase"]][0]}
+        elif "start_week" in changes and "phase" not in changes:
+            changes = {**changes, "phase": phase_for_week(int(changes["start_week"]))}
+        for key in ("start_week", "duration_weeks"):
+            if key in changes and not (0 <= int(changes[key]) <= 104):
+                raise HTTPException(422, f"{key} hors bornes")
     diffs = {}
     for field, value in changes.items():
         before = getattr(item, field)

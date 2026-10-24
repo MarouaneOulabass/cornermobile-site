@@ -17,6 +17,7 @@ from app.engine.opportunities import generate
 from app.engine.opportunity_store import persist_opportunities
 from app.engine.organization import persist_organization, persist_processes
 from app.engine.pain_points import persist_findings
+from app.engine.roadmap import persist_roadmap
 from app.models import AuditMission, Evidence
 from app.models.base import utcnow
 from app.services.business_case import recompute_mission
@@ -56,6 +57,9 @@ def run_analysis(db: Session, mission: AuditMission, on_step: Step | None = None
     summary["opportunities"] = len(opportunities)
     mission.insights = compute_insights(ctx, ex, env, findings)
 
+    report("Roadmap", 6)
+    summary["roadmap_items"] = len(persist_roadmap(db, mission))
+
     mission.analysis_version += 1
     mission.analyzed_at = utcnow()
     mission.status = MissionStatus.review
@@ -63,4 +67,4 @@ def run_analysis(db: Session, mission: AuditMission, on_step: Step | None = None
     return summary
 
 
-ANALYSIS_STEPS = 5
+ANALYSIS_STEPS = 6

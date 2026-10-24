@@ -466,3 +466,29 @@ export interface Overview {
   value_by_category: Record<string, number>;
   hypotheses: number;
 }
+
+export interface RoadmapItem {
+  id: string;
+  opportunity_id: string | null;
+  title: string;
+  description: string;
+  phase: string;
+  kind: "quick_win" | "pilote" | "industrialisation" | "projet" | "socle";
+  start_week: number;
+  duration_weeks: number;
+  owner: string | null;
+  depends_on: string[];
+  ordinal: number;
+  validation_status: ValidationStatus;
+  edited_fields: string[];
+  generated: Record<string, unknown>;
+  value: number | null;
+  priority_label: string | null;
+  category: string | null;
+}
+
+export interface Roadmap {
+  items: RoadmapItem[];
+  phases: { key: string; label: string; title: string; start_week: number; end_week: number }[];
+  value_by_phase: Record<string, number>;
+}

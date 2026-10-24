@@ -309,3 +309,40 @@ class OverviewOut(BaseModel):
     risks: list[RiskOut] = Field(default_factory=list)
     value_by_category: dict = Field(default_factory=dict)
     hypotheses: int = 0
+
+
+class RoadmapItemOut(ORM):
+    id: uuid.UUID
+    opportunity_id: uuid.UUID | None
+    title: str
+    description: str
+    phase: str
+    kind: str
+    start_week: int
+    duration_weeks: int
+    owner: str | None
+    depends_on: list
+    ordinal: int
+    validation_status: str
+    edited_fields: list
+    generated: dict
+    value: float | None = None
+    priority_label: str | None = None
+    category: str | None = None
+
+
+class RoadmapOut(BaseModel):
+    items: list[RoadmapItemOut]
+    phases: list[dict]
+    value_by_phase: dict[str, float]
+
+
+class RoadmapItemIn(BaseModel):
+    title: str = Field(min_length=2, max_length=300)
+    description: str = ""
+    phase: str = "j30"
+    start_week: int | None = Field(default=None, ge=0, le=104)
+    duration_weeks: int = Field(default=4, ge=1, le=104)
+    owner: str | None = None
+    kind: Literal["quick_win", "pilote", "industrialisation", "projet", "socle"] = "socle"
+    opportunity_id: uuid.UUID | None = None

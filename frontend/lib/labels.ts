@@ -132,3 +132,11 @@ export const SCORE_LABELS: Record<string, string> = {
   compliance_risk: "Risque de conformité",
   confidence: "Confiance",
 };
+
+export const ROADMAP_KINDS: Record<string, { label: string; color: string; tone: Tone }> = {
+  socle: { label: "Socle", color: "#6b7280", tone: "neutral" },
+  quick_win: { label: "Quick win", color: "#15803d", tone: "value" },
+  pilote: { label: "Pilote", color: "#2563eb", tone: "info" },
+  industrialisation: { label: "Déploiement", color: "#7e22ce", tone: "info" },
+  projet: { label: "Projet", color: "#b45309", tone: "check" },
+};
