@@ -14,7 +14,7 @@ concurrency:
 
 env:
   UV_VERSION: "0.11.32"
-  WEASYPRINT_DEPS: libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core
+  WEASYPRINT_DEPS: libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core
 
 jobs:
   backend:

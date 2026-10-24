@@ -97,25 +97,57 @@ docker-compose.yml           postgres, redis, api, worker, web (+ docker-compose
 
 ## 4. Installation et démarrage
 
+### Nouveau poste Windows : installation complète (WSL2 + Ubuntu)
+
+```powershell
+# PowerShell en administrateur, une seule fois, puis redémarrer le PC
+wsl --install -d Ubuntu
+```
+
+```bash
+# Dans le terminal « Ubuntu » : outils système, PostgreSQL, bibliothèques PDF
+sudo apt update
+sudo apt install -y git curl build-essential postgresql libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core
+curl -LsSf https://astral.sh/uv/install.sh | sh                                      # uv (Python)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash      # nvm (Node)
+source ~/.bashrc
+nvm install 22
+git config --global user.name "Votre Nom"
+git config --global user.email "vous@example.com"
+
+# Code (dans le système de fichiers Linux, pas sous /mnt/c : beaucoup plus rapide)
+mkdir -p ~/projets && cd ~/projets
+git clone -b claude/new-session-s0mlha https://github.com/MarouaneOulabass/cornermobile-site.git auditflow
+cd auditflow
+```
+
+Si le dépôt est privé, git demande un identifiant : le mot de passe est un *personal access token* GitHub, ou
+utiliser `sudo apt install -y gh && gh auth login` puis
+`gh repo clone MarouaneOulabass/cornermobile-site auditflow -- -b claude/new-session-s0mlha`.
+Les ports de WSL2 sont accessibles depuis Windows : http://localhost:3000 s'ouvre dans le navigateur Windows.
+Ensuite, suivre « Local » ci-dessous (et `sudo service postgresql start` à chaque redémarrage de WSL).
+
 ### Local (recommandé pour développer ; sous Windows : dans WSL2 Ubuntu)
 
 Prérequis : Python 3.11+ et `uv`, Node 22, PostgreSQL 16, Pango pour WeasyPrint
-(`sudo apt install libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0`).
+(`sudo apt install libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core`).
 
 ```bash
 # Base de données (une fois)
+sudo service postgresql start
 sudo -u postgres psql -c "CREATE USER auditflow WITH PASSWORD 'auditflow' CREATEDB;"
 sudo -u postgres createdb -O auditflow auditflow
 sudo -u postgres createdb -O auditflow auditflow_test
 
-# API
+# API (depuis la racine du dépôt)
 cd backend
-cp .env.example .env            # puis renseigner AUDITFLOW_SECRET_KEY (openssl rand -hex 32)
+cp .env.example .env
+sed -i "s/^AUDITFLOW_SECRET_KEY=$/AUDITFLOW_SECRET_KEY=$(openssl rand -hex 32)/" .env
 uv sync --extra dev
 uv run python -m app.seed --reset --analyze    # migrations + 3 entreprises importées et analysées
 uv run uvicorn app.main:app --reload           # http://localhost:8000/api/docs
 
-# Web (autre terminal)
+# Web (autre terminal, depuis la racine du dépôt)
 cd frontend
 npm ci
 npm run dev                                    # http://localhost:3000 (proxy /api → localhost:8000)
