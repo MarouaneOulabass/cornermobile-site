@@ -31,8 +31,9 @@ class Settings(BaseSettings):
     s3_secret_key: str | None = None
     s3_region: str = "us-east-1"
 
-    # Jobs: "inline" runs jobs in-process (tests, local dev); "rq" dispatches to Redis workers.
-    job_backend: str = "inline"
+    # Jobs: "inline" runs synchronously (tests), "thread" in a background thread (local dev),
+    # "rq" dispatches to Redis workers (production, see docker-compose).
+    job_backend: str = "thread"
     redis_url: str = "redis://localhost:6379/0"
 
     # AI layer (provider-agnostic). "none" = deterministic heuristics only.

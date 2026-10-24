@@ -4,6 +4,7 @@ import { Check, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { mutate } from "swr";
 import { useMission } from "@/components/shell/MissionContext";
+import { UploadPanel } from "@/components/sources/UploadPanel";
 import { Button, Card, ErrorBox, PageHeader, Pill } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { InterviewItem, Mission, Organization } from "@/lib/types";
@@ -181,6 +182,9 @@ export default function OnboardingPage() {
         <CompanyCard org={organization} />
         <ObjectivesCard mission={mission} />
         <InterviewsCard mission={mission} />
+        <Card title="4. Import des sources">
+          <UploadPanel missionId={mission.id} />
+        </Card>
       </div>
     </>
   );

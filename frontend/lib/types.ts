@@ -105,3 +105,103 @@ export interface ExecSummary {
   decision: string | null;
   caveats: string[];
 }
+
+export interface DocumentItem {
+  id: string;
+  filename: string;
+  path: string;
+  file_type: string;
+  size_bytes: number;
+  sha256: string;
+  version: number;
+  is_current: boolean;
+  previous_version_id: string | null;
+  duplicate_of_id: string | null;
+  status: "received" | "parsed" | "indexed" | "error" | "duplicate";
+  error: string | null;
+  category: string | null;
+  category_confidence: number | null;
+  classification_method: string | null;
+  title: string | null;
+  line_count: number;
+  created_at: string;
+}
+
+export interface TableSummary {
+  id: string;
+  name: string;
+  columns: string[];
+  column_types: Record<string, string>;
+  row_count: number;
+  truncated: boolean;
+}
+
+export interface DocumentDetail extends DocumentItem {
+  meta: Record<string, unknown>;
+  tables: TableSummary[];
+}
+
+export interface TableRows {
+  id: string;
+  name: string;
+  columns: string[];
+  column_types: Record<string, string>;
+  row_count: number;
+  offset: number;
+  rows: string[][];
+  row_numbers: number[];
+}
+
+export interface DocumentLines {
+  id: string;
+  filename: string;
+  start: number;
+  end: number;
+  total: number;
+  lines: string[];
+}
+
+export interface Job {
+  id: string;
+  kind: string;
+  status: "queued" | "running" | "done" | "error";
+  progress: number;
+  total: number;
+  done: number;
+  message: string | null;
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+}
+
+export interface UploadResult {
+  job_id: string;
+  received: number;
+  queued: number;
+  duplicates: number;
+  errors: number;
+  documents: DocumentItem[];
+}
+
+export interface SearchHit {
+  document_id: string;
+  filename: string;
+  path: string;
+  category: string | null;
+  start_line: number;
+  end_line: number;
+  excerpt: string;
+  score: number;
+  lexical_rank: number | null;
+  vector_rank: number | null;
+}
+
+export interface LibraryStats {
+  total: number;
+  by_status: Record<string, number>;
+  by_category: Record<string, number>;
+  by_type: Record<string, number>;
+  tables: number;
+  rows: number;
+}

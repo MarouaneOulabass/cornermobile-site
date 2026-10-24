@@ -67,7 +67,8 @@ export function MissionShell({ missionId, children }: { missionId: string; child
   return (
     <MissionContext.Provider value={ctx}>
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[240px_1fr]">
-        <aside className="no-print bg-nav px-4 py-5 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
+        <div className="no-print bg-nav">
+        <aside className="px-4 py-5 text-white lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
           <Link href="/" className="mx-2.5 mb-5 block text-xl font-extrabold">
             Audit<span className="text-blue-300">Flow</span>
           </Link>
@@ -114,6 +115,7 @@ export function MissionShell({ missionId, children }: { missionId: string; child
             <UserMenu dark />
           </div>
         </aside>
+        </div>
         <main className="min-w-0 px-4 py-6 sm:px-8">
           <div className="no-print mb-4 flex justify-end">
             <Button size="sm" onClick={() => setSummaryOpen(true)}>

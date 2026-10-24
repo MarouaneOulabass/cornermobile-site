@@ -24,3 +24,29 @@ export const CRITICALITY_LABELS: Record<string, [string, Tone]> = {
 };
 
 export const EFFORT_LABELS: Record<string, string> = { faible: "Faible", moyen: "Moyen", eleve: "Élevé" };
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  finance: "Finance",
+  ventes: "Ventes",
+  achats: "Achats",
+  operations: "Opérations",
+  rh: "RH",
+  contrats: "Contrats",
+  procedures: "Procédures",
+  qualite: "Qualité",
+  maintenance: "Maintenance",
+  support: "Support",
+  reporting: "Reporting",
+  it_securite: "IT / sécurité",
+  autre: "Autre",
+};
+
+export const DOC_STATUS_LABELS: Record<string, [string, Tone]> = {
+  received: ["Reçu", "neutral"],
+  parsed: ["Parsé", "info"],
+  indexed: ["Indexé", "value"],
+  error: ["Erreur", "risk"],
+  duplicate: ["Doublon", "check"],
+};
+
+export const METHOD_LABELS: Record<string, string> = { regles: "règles", llm: "IA", manuel: "manuel" };

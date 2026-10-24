@@ -28,6 +28,8 @@ class Document(IdMixin, MissionMixin, Base):
         Uuid, ForeignKey("documents.id", ondelete="SET NULL")
     )
     storage_key: Mapped[str] = mapped_column(String(512))
+    # False once a newer version of the same path has been imported; analyses use current versions only.
+    is_current: Mapped[bool] = mapped_column(default=True)
     status: Mapped[str] = mapped_column(String(16), default=DocumentStatus.received)
     error: Mapped[str | None] = mapped_column(Text)
     category: Mapped[str | None] = mapped_column(String(32))
