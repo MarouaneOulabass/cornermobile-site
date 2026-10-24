@@ -1,0 +1,8 @@
+# Same bytes on every OS (Windows clones included): project text files keep LF line endings.
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.xlsx binary
+*.docx binary
+# The demo kit is kept byte-for-byte as delivered (its CSVs use CRLF).
+demo-data/** -text

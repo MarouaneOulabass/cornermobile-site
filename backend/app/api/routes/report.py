@@ -22,6 +22,7 @@ from app.schemas.analysis import (
 )
 from app.services import audit_log
 from app.services.report import (
+    PdfUnavailable,
     build_report,
     create_export,
     publication_check,
@@ -110,7 +111,10 @@ def publish_report(body: PublishIn, ctx: MissionCtx, db: DB) -> PublishOut:
                 "contested": check["contested"],
             },
         )
-    exports = publish(db, mission, ctx.user.id)
+    try:
+        exports = publish(db, mission, ctx.user.id)
+    except PdfUnavailable as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc)) from exc
     audit_log.record(
         db,
         "report.publish",
@@ -151,7 +155,10 @@ def export_report(body: ExportIn, ctx: MissionCtx, db: DB) -> Export:
     mission = db.merge(ctx.mission)
     if mission.analysis_version == 0:
         raise HTTPException(status.HTTP_409_CONFLICT, "Lancez l'analyse avant d'exporter")
-    export = create_export(db, mission, body.format, ctx.user.id, published=False)
+    try:
+        export = create_export(db, mission, body.format, ctx.user.id, published=False)
+    except PdfUnavailable as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc)) from exc
     audit_log.record(
         db,
         "report.export",

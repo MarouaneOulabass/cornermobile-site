@@ -5,11 +5,16 @@ import re
 import pytest
 
 from app.config import get_settings
+from app.services import report as report_service
 from app.services.pipeline import analyze_sync, import_folder_and_analyze
-from app.services.report import _css_string
+from app.services.report import _css_string, pdf_available
 from tests.conftest import login
 
 DEMO = get_settings().demo_data_dir
+# PDF rendering needs Pango at the system level (absent on a bare Windows machine).
+requires_pdf = pytest.mark.skipif(
+    not pdf_available(), reason="WeasyPrint system libraries (Pango) not installed"
+)
 
 
 @pytest.fixture
@@ -86,6 +91,7 @@ def test_edited_recommendation_survives_reanalysis(client, analyzed, db):
     assert text in client.get(f"/api/missions/{mission.id}/report/html", headers=headers).text
 
 
+@requires_pdf
 def test_pdf_export(client, analyzed):
     mission = analyzed("atlaspro-distribution")
     headers = login(client, "consultant@auditflow.demo")
@@ -102,6 +108,7 @@ def test_pdf_export(client, analyzed):
     ]
 
 
+@requires_pdf
 def test_publication_flow_and_client_access(client, analyzed, db):
     mission = analyzed("atlaspro-distribution")
     consultant = login(client, "consultant@auditflow.demo")
@@ -176,6 +183,7 @@ def test_contestation_blocks_ready_until_reviewed(client, analyzed):
     assert client.get(f"{base}/publication", headers=consultant).json()["contested"] == 0
 
 
+@requires_pdf
 def test_report_is_tenant_isolated(client, analyzed):
     atlas = analyzed("atlaspro-distribution")
     consultant = login(client, "consultant@auditflow.demo")
@@ -201,6 +209,30 @@ def test_report_is_tenant_isolated(client, analyzed):
             f"/api/missions/{darna_mission}/exports/{export['id']}/download", headers=other
         ).status_code
         == 404
+    )
+
+
+def test_missing_pdf_libraries_give_a_clear_error(client, analyzed, monkeypatch):
+    mission = analyzed("darna-facility-services")
+    headers = login(client, "consultant@auditflow.demo")
+
+    def unavailable(html):
+        raise report_service.PdfUnavailable("Export PDF indisponible")
+
+    monkeypatch.setattr(report_service, "render_pdf", unavailable)
+    resp = client.post(f"/api/missions/{mission.id}/exports", json={"format": "pdf"}, headers=headers)
+    assert resp.status_code == 503 and "indisponible" in resp.json()["detail"]
+    publish = client.post(
+        f"/api/missions/{mission.id}/publish", json={"acknowledge_unreviewed": True}, headers=headers
+    )
+    assert publish.status_code == 503
+    assert client.get(f"/api/missions/{mission.id}", headers=headers).json()["published_at"] is None
+    # HTML exports do not need the PDF libraries.
+    assert (
+        client.post(
+            f"/api/missions/{mission.id}/exports", json={"format": "html"}, headers=headers
+        ).status_code
+        == 201
     )
 
 

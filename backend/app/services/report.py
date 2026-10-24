@@ -394,9 +394,25 @@ def render_html(data: dict) -> str:
     return _env().get_template("report.html.j2").render(**data)
 
 
-def render_pdf(html: str) -> bytes:
-    from weasyprint import HTML
+class PdfUnavailable(RuntimeError):
+    """WeasyPrint cannot load its system libraries (Pango), e.g. on a Windows machine without MSYS2."""
 
+
+def pdf_available() -> bool:
+    try:
+        import weasyprint  # noqa: F401
+    except OSError:
+        return False
+    return True
+
+
+def render_pdf(html: str) -> bytes:
+    try:
+        from weasyprint import HTML
+    except OSError as exc:
+        raise PdfUnavailable(
+            "Export PDF indisponible : les bibliothèques Pango ne sont pas installées sur le serveur (voir CLAUDE.md)."
+        ) from exc
     return HTML(string=html, base_url=str(TEMPLATES)).write_pdf()
 
 

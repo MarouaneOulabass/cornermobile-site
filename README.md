@@ -27,8 +27,8 @@ Stockage objet S3 (MinIO, chiffrement au repos) : `docker compose -f docker-comp
 ### En local (développement)
 
 Prérequis : Python 3.11+, [uv](https://docs.astral.sh/uv/), Node 22, PostgreSQL 16, et Pango pour les PDF
-(`apt install libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core`). Installation pas à pas sur un PC Windows
-(WSL2) : voir [`CLAUDE.md`](CLAUDE.md), §4.
+(`apt install libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core`). Installation pas à pas sur Windows
+(PowerShell natif ou WSL2) : voir [`CLAUDE.md`](CLAUDE.md), §4.
 
 ```bash
 # API

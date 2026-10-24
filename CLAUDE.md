@@ -97,7 +97,70 @@ docker-compose.yml           postgres, redis, api, worker, web (+ docker-compose
 
 ## 4. Installation et démarrage
 
-### Nouveau poste Windows : installation complète (WSL2 + Ubuntu)
+### Windows natif (PowerShell)
+
+Tout fonctionne nativement sous Windows, sauf l'export PDF qui demande une étape facultative (Pango via MSYS2,
+dernière section ci-dessous). Sans elle, l'application et les tests tournent ; l'export PDF et la publication
+répondent « Export PDF indisponible » (503) et les tests qui produisent un PDF sont ignorés.
+
+```powershell
+# 1. Outils (une fois). Rouvrir PowerShell ensuite pour que le PATH soit à jour.
+winget install -e --id Git.Git
+winget install -e --id OpenJS.NodeJS.LTS
+winget install -e --id PostgreSQL.PostgreSQL.16 --interactive   # noter le mot de passe « postgres » choisi
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"   # uv (installe aussi Python)
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned               # autorise npm / uv dans PowerShell
+git config --global user.name "Votre Nom"
+git config --global user.email "vous@example.com"
+
+# 2. Code
+New-Item -ItemType Directory -Force "$HOME\projets" | Out-Null
+cd "$HOME\projets"
+git clone -b claude/new-session-s0mlha https://github.com/MarouaneOulabass/cornermobile-site.git auditflow
+cd auditflow
+
+# 3. Base de données (une fois ; demande le mot de passe « postgres »)
+$pg = "C:\Program Files\PostgreSQL\16\bin"
+& "$pg\psql.exe" -U postgres -c "CREATE USER auditflow WITH PASSWORD 'auditflow' CREATEDB;"
+& "$pg\createdb.exe" -U postgres -O auditflow auditflow
+& "$pg\createdb.exe" -U postgres -O auditflow auditflow_test
+
+# 4. API (terminal 1)
+cd "$HOME\projets\auditflow\backend"
+Copy-Item .env.example .env
+$bytes = New-Object byte[] 32
+[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+$key = ($bytes | ForEach-Object { $_.ToString("x2") }) -join ""
+(Get-Content .env) -replace '^AUDITFLOW_SECRET_KEY=$', "AUDITFLOW_SECRET_KEY=$key" | Set-Content .env
+uv sync --extra dev
+uv run python -m app.seed --reset --analyze
+uv run uvicorn app.main:app --reload
+
+# 5. Web (terminal 2)
+cd "$HOME\projets\auditflow\frontend"
+npm ci
+npm run dev                                   # http://localhost:3000
+
+# 6. Claude Code (terminal 3)
+irm https://claude.ai/install.ps1 | iex
+cd "$HOME\projets\auditflow"
+claude
+```
+
+PostgreSQL tourne ensuite comme service Windows : les jours suivants, seules les commandes `uvicorn` et
+`npm run dev` sont nécessaires. Le clone utilise le gestionnaire d'identifiants de Git pour Windows (connexion
+GitHub dans le navigateur si le dépôt est privé). Variables d'environnement en PowerShell : `$env:NOM = "valeur"`.
+
+Export PDF sous Windows (facultatif) — WeasyPrint charge Pango depuis MSYS2 :
+
+```powershell
+winget install -e --id MSYS2.MSYS2
+C:\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-x86_64-pango"
+[Environment]::SetEnvironmentVariable("WEASYPRINT_DLL_DIRECTORIES", "C:\msys64\mingw64\bin", "User")
+# Rouvrir PowerShell, puis relancer l'API.
+```
+
+### Windows via WSL2 (Ubuntu) — alternative
 
 ```powershell
 # PowerShell en administrateur, une seule fois, puis redémarrer le PC
@@ -125,9 +188,9 @@ Si le dépôt est privé, git demande un identifiant : le mot de passe est un *p
 utiliser `sudo apt install -y gh && gh auth login` puis
 `gh repo clone MarouaneOulabass/cornermobile-site auditflow -- -b claude/new-session-s0mlha`.
 Les ports de WSL2 sont accessibles depuis Windows : http://localhost:3000 s'ouvre dans le navigateur Windows.
-Ensuite, suivre « Local » ci-dessous (et `sudo service postgresql start` à chaque redémarrage de WSL).
+Ensuite, suivre « Linux / macOS / WSL2 » ci-dessous (et `sudo service postgresql start` à chaque redémarrage de WSL).
 
-### Local (recommandé pour développer ; sous Windows : dans WSL2 Ubuntu)
+### Linux / macOS / WSL2
 
 Prérequis : Python 3.11+ et `uv`, Node 22, PostgreSQL 16, Pango pour WeasyPrint
 (`sudo apt install libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core`).
@@ -298,7 +361,10 @@ ses en-têtes aux réponses proxifiées `/api`) ; le rapport HTML a une CSP sans
 
 ## 9. Pièges connus
 
-- WeasyPrint a besoin de Pango/HarfBuzz au niveau système ; sous Windows natif c'est pénible → WSL2 ou Docker.
+- WeasyPrint a besoin de Pango au niveau système. Sous Windows natif : MSYS2 + `WEASYPRINT_DLL_DIRECTORIES`
+  (§4) ; sans cela `render_pdf` lève `PdfUnavailable` → 503, et les tests PDF sont ignorés (`requires_pdf`).
+- `.gitattributes` force LF pour le code (clones Windows identiques) mais laisse `demo-data/` tel quel
+  (ses CSV sont en CRLF) : ne jamais renormaliser le jeu de démo.
 - Le venv créé par `uv` ne contient pas `pip` : utiliser `uv add`, `uv sync`, `uv run`.
 - SQLite renvoie des datetimes naïfs : comparer en UTC (voir `_aware` dans `services/report.py`).
 - `next.config.ts` → `headers()` ne s'applique pas aux réponses proxifiées `/api` : les en-têtes de sécurité de
