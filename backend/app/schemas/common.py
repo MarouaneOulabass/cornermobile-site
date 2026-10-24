@@ -129,3 +129,27 @@ class PortfolioCard(BaseModel):
     mission: MissionOut | None
     stats: MissionStats
     role: str
+
+
+class MemberOut(BaseModel):
+    user_id: uuid.UUID
+    full_name: str
+    email: str
+    role: str
+    department_scope: str | None
+
+
+class BenchmarkOut(BaseModel):
+    key: str
+    label: str
+    unit: str
+    default: float
+    value: float
+    overridden: bool
+    rationale: str
+
+
+class BenchmarksIn(BaseModel):
+    """Per-mission overrides; null restores the default."""
+
+    overrides: dict[str, float | None]

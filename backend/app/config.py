@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     s3_access_key: str | None = None
     s3_secret_key: str | None = None
     s3_region: str = "us-east-1"
+    # Encryption at rest for stored files ("AES256" = SSE-S3; MinIO needs MINIO_KMS_SECRET_KEY for it).
+    s3_server_side_encryption: str | None = "AES256"
 
     # Jobs: "inline" runs synchronously (tests), "thread" in a background thread (local dev),
     # "rq" dispatches to Redis workers (production, see docker-compose).

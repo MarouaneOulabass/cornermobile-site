@@ -1,0 +1,160 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.11.32"
+  WEASYPRINT_DEPS: libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: auditflow
+          POSTGRES_PASSWORD: auditflow
+          POSTGRES_DB: auditflow_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U auditflow" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends $WEASYPRINT_DEPS
+      - run: uv sync --locked --extra dev
+      - name: Lint
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Tests (SQLite)
+        run: uv run pytest
+      - name: Tests (PostgreSQL)
+        run: uv run pytest
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://auditflow:auditflow@localhost:5432/auditflow_test
+      - name: Migrations match the models
+        run: |
+          psql postgresql://auditflow:auditflow@localhost:5432/auditflow_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          uv run alembic upgrade head
+          uv run alembic check
+          uv run alembic downgrade base
+        env:
+          AUDITFLOW_DATABASE_URL: postgresql+psycopg://auditflow:auditflow@localhost:5432/auditflow_test
+          AUDITFLOW_SECRET_KEY: ci-only-secret-key-0123456789abcdef
+      - name: Evals on the demo kit (spec §14)
+        run: uv run python -m evals --out ../evals-out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evals
+          path: evals-out/
+
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    needs: [backend, frontend]
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: auditflow
+          POSTGRES_PASSWORD: auditflow
+          POSTGRES_DB: auditflow
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U auditflow" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      AUDITFLOW_DATABASE_URL: postgresql+psycopg://auditflow:auditflow@localhost:5432/auditflow
+      AUDITFLOW_SECRET_KEY: ci-only-secret-key-0123456789abcdef
+      AUDITFLOW_JOB_BACKEND: thread
+      AUDITFLOW_DEMO_PASSWORD: e2e-demo-password
+      E2E_PASSWORD: e2e-demo-password
+      AUDITFLOW_API_URL: http://localhost:8000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends $WEASYPRINT_DEPS
+      - name: API with the analyzed demo
+        working-directory: backend
+        run: |
+          uv sync --locked
+          uv run python -m app.seed --reset --analyze
+          nohup uv run uvicorn app.main:app --port 8000 > ../api.log 2>&1 &
+      - name: Web app
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+          nohup npm start > ../web.log 2>&1 &
+          npx --yes wait-on@8.0.3 --timeout 60000 http://localhost:3000/login http://localhost:8000/api/health
+      - name: Playwright
+        working-directory: frontend
+        run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            api.log
+            web.log
+
+  docker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose files are valid
+        run: |
+          POSTGRES_PASSWORD=x AUDITFLOW_SECRET_KEY=y MINIO_ROOT_PASSWORD=z MINIO_KMS_SECRET_KEY=k \
+            docker compose -f docker-compose.yml -f docker-compose.s3.yml config --quiet
+      - run: docker build -f backend/Dockerfile -t auditflow-api .
+      - run: docker build -f frontend/Dockerfile -t auditflow-web .
+      - name: API image starts and serves health
+        run: |
+          docker run -d --name api -e AUDITFLOW_SECRET_KEY=ci-only-secret-key-0123456789abcdef \
+            -e AUDITFLOW_DATABASE_URL=sqlite:////tmp/ci.db -p 8000:8000 auditflow-api
+          for i in $(seq 1 30); do curl -fsS localhost:8000/api/health && exit 0; sleep 2; done
+          docker logs api; exit 1

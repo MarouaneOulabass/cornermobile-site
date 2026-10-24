@@ -523,3 +523,26 @@ export interface PublicationCheck {
   contested: number;
   ready: boolean;
 }
+
+export interface Benchmark {
+  key: string;
+  label: string;
+  unit: string;
+  default: number;
+  value: number;
+  overridden: boolean;
+  rationale: string;
+}
+
+export interface ScoringModel {
+  weights: Record<string, number>;
+  penalties: Record<string, number>;
+}
+
+export interface Member {
+  user_id: string;
+  full_name: string;
+  email: string;
+  role: Role;
+  department_scope: string | null;
+}

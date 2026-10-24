@@ -68,9 +68,17 @@ class S3Storage:
             aws_secret_access_key=s.s3_secret_key,
             region_name=s.s3_region,
         )
+        self.sse = s.s3_server_side_encryption or None
+        self._ensure_bucket()
+
+    def _ensure_bucket(self) -> None:
+        try:
+            self.client.head_bucket(Bucket=self.bucket)
+        except self.client.exceptions.ClientError:
+            self.client.create_bucket(Bucket=self.bucket)
 
     def put(self, key: str, data: bytes, content_type: str | None = None) -> None:
-        extra = {"ServerSideEncryption": "AES256"}
+        extra = {"ServerSideEncryption": self.sse} if self.sse else {}
         if content_type:
             extra["ContentType"] = content_type
         self.client.put_object(Bucket=self.bucket, Key=_safe_key(key), Body=data, **extra)

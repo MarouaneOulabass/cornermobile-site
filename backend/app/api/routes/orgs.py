@@ -10,6 +10,7 @@ from app.api.deps import DB, CurrentUser, OrgCtx
 from app.domain.enums import Role
 from app.models import AuditMission, Membership, Organization
 from app.schemas.common import (
+    MemberOut,
     MissionIn,
     MissionOut,
     MissionStats,
@@ -149,3 +150,23 @@ def create_mission(body: MissionIn, ctx: OrgCtx, db: DB) -> AuditMission:
     )
     db.commit()
     return mission
+
+
+@router.get("/orgs/{org_id}/members", response_model=list[MemberOut])
+def list_members(ctx: OrgCtx, db: DB) -> list[MemberOut]:
+    ctx.require_write()
+    rows = db.scalars(select(Membership).where(Membership.organization_id == ctx.org_id)).all()
+    return sorted(
+        (
+            MemberOut(
+                user_id=m.user.id,
+                full_name=m.user.full_name,
+                email=m.user.email,
+                role=m.role,
+                department_scope=m.department_scope,
+            )
+            for m in rows
+            if m.user.is_active
+        ),
+        key=lambda m: (m.role, m.full_name),
+    )

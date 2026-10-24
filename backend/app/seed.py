@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -164,7 +164,9 @@ def seed(db: Session, demo_dir: Path | None = None, password: str | None = None)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--reset", action="store_true", help="drop and recreate every table first")
+    parser.add_argument(
+        "--reset", action="store_true", help="drop every table, then migrate to the latest schema"
+    )
     parser.add_argument("--analyze", action="store_true", help="import demo files and run the analysis")
     args = parser.parse_args()
 
@@ -173,7 +175,9 @@ def main() -> None:
     engine = dbmod.engine()
     if args.reset:
         Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+        with engine.begin() as conn:
+            conn.execute(text("DROP TABLE IF EXISTS alembic_version"))
+    dbmod.migrate()
     with dbmod.session_factory()() as db:
         missions = seed(db)
         if args.analyze:

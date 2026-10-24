@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Response
+import math
+
+from fastapi import APIRouter, HTTPException, Response
 
 from app.api.deps import DB, MissionCtx
+from app.engine.benchmarks import BENCHMARKS
 from app.models import AuditMission
-from app.schemas.common import MissionOut, MissionPatch, MissionStats
+from app.schemas.common import BenchmarkOut, BenchmarksIn, MissionOut, MissionPatch, MissionStats
 from app.services import audit_log
 from app.services.missions import delete_mission, mission_stats
 from app.services.summary import ExecSummary, executive_summary
@@ -66,3 +69,56 @@ def remove_mission(ctx: MissionCtx, db: DB) -> Response:
     )
     db.commit()
     return Response(status_code=204)
+
+
+def _benchmarks(mission: AuditMission) -> list[BenchmarkOut]:
+    params = mission.parameters or {}
+    return [
+        BenchmarkOut(
+            key=b.key,
+            label=b.label,
+            unit=b.unit,
+            default=b.value,
+            value=float(params[b.key]) if params.get(b.key) is not None else b.value,
+            overridden=params.get(b.key) is not None,
+            rationale=b.rationale,
+        )
+        for b in BENCHMARKS.values()
+    ]
+
+
+@router.get("/benchmarks", response_model=list[BenchmarkOut])
+def get_benchmarks(ctx: MissionCtx) -> list[BenchmarkOut]:
+    """Reference values used when sources are silent; every one is shown as a hypothesis in the business cases."""
+    return _benchmarks(ctx.mission)
+
+
+@router.put("/benchmarks", response_model=list[BenchmarkOut])
+def put_benchmarks(body: BenchmarksIn, ctx: MissionCtx, db: DB) -> list[BenchmarkOut]:
+    """Overrides take effect at the next analysis."""
+    ctx.require_write()
+    unknown = set(body.overrides) - set(BENCHMARKS)
+    if unknown:
+        raise HTTPException(422, f"Référence inconnue : {', '.join(sorted(unknown))}")
+    for key, value in body.overrides.items():
+        if value is not None and (not math.isfinite(value) or value < 0):
+            raise HTTPException(422, f"Valeur invalide pour {BENCHMARKS[key].label}")
+    mission = db.merge(ctx.mission)
+    params = dict(mission.parameters or {})
+    for key, value in body.overrides.items():
+        if value is None:
+            params.pop(key, None)
+        else:
+            params[key] = value
+    mission.parameters = params
+    audit_log.record(
+        db,
+        "mission.benchmarks",
+        user_id=ctx.user.id,
+        organization_id=ctx.org_id,
+        entity_type="mission",
+        entity_id=mission.id,
+        fields=sorted(body.overrides),
+    )
+    db.commit()
+    return _benchmarks(mission)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from pathlib import Path
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
@@ -61,3 +62,18 @@ def get_db() -> Iterator[Session]:
         yield db
     finally:
         db.close()
+
+
+ALEMBIC_INI = Path(__file__).resolve().parent.parent / "alembic.ini"
+
+
+def migrate(database_url: str | None = None) -> None:
+    """Bring the schema to the latest Alembic revision (the only way production schemas change)."""
+    from alembic import command
+    from alembic.config import Config
+
+    cfg = Config(str(ALEMBIC_INI))
+    cfg.set_main_option("script_location", str(ALEMBIC_INI.parent / "alembic"))
+    if database_url:
+        cfg.attributes["database_url"] = database_url
+    command.upgrade(cfg, "head")
