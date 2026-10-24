@@ -36,3 +36,23 @@ export function datetime(value: string | null | undefined): string {
   if (!value) return "—";
   return new Date(value).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
+
+/** Format an engine metric according to its unit. */
+export function metricValue(value: number, unit: string): string {
+  switch (unit) {
+    case "ratio":
+      return pct(value, 1);
+    case "MAD":
+      return mad(value);
+    case "MAD/an":
+      return `${mad(value)}/an`;
+    case "%":
+      return `${num(value, 1)} %`;
+    case "/an":
+      return `${pct(value, 0)}/an`;
+    case "":
+      return num(value, value % 1 ? 1 : 0);
+    default:
+      return `${num(value, value % 1 ? 1 : 0)} ${unit}`;
+  }
+}

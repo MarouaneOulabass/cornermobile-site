@@ -303,3 +303,56 @@ export interface Process {
   pain_points_critical: number;
   evidence_count: number;
 }
+
+export interface Metric {
+  id: string;
+  key: string;
+  label: string;
+  value: number;
+  unit: string;
+  nature: "fait" | "calcul" | "hypothese";
+  formula: string;
+  inputs: Record<string, unknown>;
+  evidence_count: number;
+}
+
+export interface Risk {
+  id: string;
+  title: string;
+  description: string;
+  kind: string;
+  likelihood: number;
+  severity: string;
+  exposure_mad_per_year: number | null;
+  pain_point_id: string | null;
+  validation_status: ValidationStatus;
+}
+
+export interface PainPoint {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  type: string;
+  department: string | null;
+  scope: string | null;
+  frequency: string | null;
+  frequency_per_month: number | null;
+  impact: string | null;
+  impact_mad_per_year: number | null;
+  confidence: number;
+  criticality: string;
+  severity: number;
+  is_hypothesis: boolean;
+  process_id: string | null;
+  process_name: string | null;
+  validation_status: ValidationStatus;
+  validated_at: string | null;
+  edited_fields: string[];
+  generated: Record<string, unknown>;
+  evidence_count: number;
+  sources: number;
+  metrics: Metric[];
+  risk: Risk | null;
+  opportunity_ids: string[];
+}

@@ -81,6 +81,7 @@ class PainPoint(IdMixin, MissionMixin, ReviewableMixin, Base):
     impact_mad_per_year: Mapped[float | None] = mapped_column(Float)
     confidence: Mapped[float] = mapped_column(Float, default=0.5)
     criticality: Mapped[str] = mapped_column(String(16))
+    severity: Mapped[float] = mapped_column(Float, default=0)
     # True when no source supports it: it must be shown as "hypothèse à valider".
     is_hypothesis: Mapped[bool] = mapped_column(default=False)
     process_id: Mapped[uuid.UUID | None] = mapped_column(

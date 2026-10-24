@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mad, months, num, pct } from "./format";
+import { mad, metricValue, months, num, pct } from "./format";
 
 describe("format", () => {
   it("formats MAD amounts compactly", () => {
@@ -18,5 +18,17 @@ describe("format", () => {
     expect(num(1234.5, 1).replace(/\s/g, " ")).toBe("1 234,5");
     expect(months(4.84)).toBe("4,8 mois");
     expect(months(Infinity)).toBe("—");
+  });
+});
+
+
+describe("metricValue", () => {
+  it("formats by unit", () => {
+    expect(metricValue(0.7563, "ratio")).toBe("75,6 %");
+    expect(metricValue(597219, "MAD/an")).toBe("597 k MAD/an");
+    expect(metricValue(37, "min")).toBe("37 min");
+    expect(metricValue(18.08, "%")).toBe("18,1 %");
+    expect(metricValue(4, "")).toBe("4");
+    expect(metricValue(0.08, "/an")).toBe("8 %/an");
   });
 });

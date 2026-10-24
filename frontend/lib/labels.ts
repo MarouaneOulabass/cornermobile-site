@@ -80,3 +80,25 @@ export const EVIDENCE_KIND_LABELS: Record<string, [string, Tone]> = {
   aggregate: ["Calcul", "value"],
   document: ["Document", "neutral"],
 };
+
+export const PAIN_TYPE_LABELS: Record<string, string> = {
+  double_saisie: "Double saisie",
+  tache_manuelle: "Tâche manuelle répétitive",
+  delai: "Délai",
+  rupture_flux: "Rupture de flux",
+  donnee_contradictoire: "Donnée contradictoire",
+  dependance_personne: "Dépendance à une personne",
+  absence_controle: "Absence de contrôle",
+  non_respect_sla: "Non-respect SLA",
+  stock_cash_immobilise: "Stock / cash immobilisé",
+  reporting_tardif: "Reporting tardif",
+  manque_tracabilite: "Manque de traçabilité",
+  risque_contractuel: "Risque contractuel",
+  potentiel_commercial: "Potentiel commercial non exploité",
+};
+
+export const NATURE_LABELS: Record<string, [string, Tone, string]> = {
+  fait: ["Fait", "info", "Lu directement dans une source"],
+  calcul: ["Calcul", "value", "Calcul déterministe sur des faits"],
+  hypothese: ["Hypothèse", "check", "Benchmark ou estimation à valider"],
+};

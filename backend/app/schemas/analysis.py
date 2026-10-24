@@ -167,3 +167,56 @@ class ProcessOut(ORM):
     pain_points: int = 0
     pain_points_critical: int = 0
     evidence_count: int = 0
+
+
+class MetricOut(ORM):
+    id: uuid.UUID
+    key: str
+    label: str
+    value: float
+    unit: str
+    nature: str
+    formula: str
+    inputs: dict
+    evidence_count: int = 0
+
+
+class RiskOut(ORM):
+    id: uuid.UUID
+    title: str
+    description: str
+    kind: str
+    likelihood: float
+    severity: str
+    exposure_mad_per_year: float | None
+    pain_point_id: uuid.UUID | None
+    validation_status: str
+
+
+class PainPointOut(ORM):
+    id: uuid.UUID
+    code: str
+    title: str
+    description: str
+    type: str
+    department: str | None
+    scope: str | None
+    frequency: str | None
+    frequency_per_month: float | None
+    impact: str | None
+    impact_mad_per_year: float | None
+    confidence: float
+    criticality: str
+    severity: float
+    is_hypothesis: bool
+    process_id: uuid.UUID | None
+    process_name: str | None = None
+    validation_status: str
+    validated_at: datetime | None
+    edited_fields: list
+    generated: dict
+    evidence_count: int = 0
+    sources: int = 0
+    metrics: list[MetricOut] = Field(default_factory=list)
+    risk: RiskOut | None = None
+    opportunity_ids: list[uuid.UUID] = Field(default_factory=list)

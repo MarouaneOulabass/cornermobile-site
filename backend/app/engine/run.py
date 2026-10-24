@@ -9,9 +9,11 @@ from sqlalchemy.orm import Session
 
 from app.domain.enums import MissionStatus
 from app.engine.context import AnalysisContext
+from app.engine.detectors import run_detectors
 from app.engine.extract import extract
 from app.engine.graph import persist_graph
 from app.engine.organization import persist_organization, persist_processes
+from app.engine.pain_points import persist_findings
 from app.models import AuditMission, Evidence
 from app.models.base import utcnow
 
@@ -32,10 +34,16 @@ def run_analysis(db: Session, mission: AuditMission, on_step: Step | None = None
     report("Organisation et processus", 2)
     summary = {"datasets": len(ctx.datasets), "documents": len(ctx.texts)}
     summary |= persist_organization(ctx, ex)
-    summary["processes"] = len(persist_processes(ctx, ex))
+    processes = persist_processes(ctx, ex)
+    summary["processes"] = len(processes)
 
     report("Business graph", 3)
     summary["graph"] = persist_graph(ctx, ex)
+
+    report("Détection des irritants", 4)
+    findings = run_detectors(ctx, ex)
+    pain_points = persist_findings(ctx, findings, processes)
+    summary["pain_points"] = len(pain_points)
 
     mission.analysis_version += 1
     mission.analyzed_at = utcnow()
@@ -44,4 +52,4 @@ def run_analysis(db: Session, mission: AuditMission, on_step: Step | None = None
     return summary
 
 
-ANALYSIS_STEPS = 3
+ANALYSIS_STEPS = 4
