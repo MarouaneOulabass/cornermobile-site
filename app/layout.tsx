@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
@@ -11,11 +12,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
+  const page = (
     <html lang="fr" className={inter.variable}>
       <body>
         <Providers>{children}</Providers>
       </body>
     </html>
   );
+  // Clerk in deployed environments; local demo accounts otherwise.
+  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <ClerkProvider signInUrl="/login">{page}</ClerkProvider> : page;
 }

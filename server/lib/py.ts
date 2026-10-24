@@ -348,3 +348,9 @@ export function pyBool(x: unknown): number {
 export function pyOr(x: number | null | undefined, d: number): number {
   return x === null || x === undefined || x === 0 ? d : x;
 }
+
+/** str.capitalize(): first character upper case, the rest lower case. */
+export function pyCapitalize(text: string): string {
+  const [first = "", ...rest] = [...text];
+  return first.toUpperCase() + rest.join("").toLowerCase();
+}

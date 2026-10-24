@@ -4,7 +4,7 @@
  * learn anything about another.
  */
 import type { NextRequest } from "next/server";
-import { db, sql } from "../db";
+import { db, sql, type Db } from "../db";
 import { CLIENT_ROLES, Role, WRITE_ROLES } from "../domain/enums";
 import { HttpError, notFound, parseId } from "../http";
 import type { MissionRow, OrganizationRow, UserRow } from "../rows";
@@ -87,8 +87,9 @@ export async function getOwned<T extends { organization_id: string; mission_id?:
   ctx: MissionContext,
   table: string,
   id: string,
+  tx: Db = db,
 ): Promise<T> {
-  const row = await db.maybeOne<T>(sql`SELECT * FROM ${sql.raw(table)} WHERE id = ${parseId(id)}`);
+  const row = await tx.maybeOne<T>(sql`SELECT * FROM ${sql.raw(table)} WHERE id = ${parseId(id)}`);
   if (!row || row.organization_id !== ctx.orgId || (row.mission_id !== undefined && row.mission_id !== null && row.mission_id !== ctx.missionId)) {
     throw notFound();
   }

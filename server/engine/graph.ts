@@ -187,16 +187,22 @@ interface EdgeRow {
   properties: Record<string, unknown>;
 }
 
+async function nextOrdinal(ctx: AnalysisContext, table: "graph_nodes" | "graph_edges"): Promise<number> {
+  const row = await ctx.db.one<{ n: number }>(sql`SELECT coalesce(max(ordinal) + 1, 0)::int AS n FROM ${sql.raw(table)} WHERE mission_id = ${ctx.mission.id}`);
+  return row.n;
+}
+
 export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promise<{ nodes: number; edges: number }> {
   const tx = ctx.db;
   const mid = ctx.mission.id;
   const [specs, edgeSpecs] = buildSpecs(ex);
   const existing = new Map((await tx.query<NodeRow>(sql`SELECT id, key, origin, properties FROM graph_nodes WHERE mission_id = ${mid}`)).map((n) => [n.key, n]));
   const inserts: Record<string, unknown>[] = [];
+  let nodeOrdinal = await nextOrdinal(ctx, "graph_nodes");
   for (const [key, spec] of specs) {
     const current = existing.get(key);
     if (!current) {
-      inserts.push({ id: randomUUID(), organization_id: ctx.orgId, mission_id: mid, key, kind: spec.kind, label: spec.label, properties: spec.properties, origin: "engine" });
+      inserts.push({ id: randomUUID(), organization_id: ctx.orgId, mission_id: mid, key, kind: spec.kind, label: spec.label, properties: spec.properties, origin: "engine", ordinal: nodeOrdinal++ });
     } else {
       const userProps = Object.fromEntries(Object.entries(current.properties ?? {}).filter(([k]) => ["hidden", "label_edited", "note"].includes(k)));
       await tx.exec(sql`
@@ -207,7 +213,7 @@ export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promis
   }
   await tx.insertMany(
     "graph_nodes",
-    { id: "uuid", organization_id: "uuid", mission_id: "uuid", key: "text", kind: "text", label: "text", properties: "json", origin: "text" },
+    { id: "uuid", organization_id: "uuid", mission_id: "uuid", key: "text", kind: "text", label: "text", properties: "json", origin: "text", ordinal: "integer" },
     inserts,
     "id",
   );
@@ -219,6 +225,7 @@ export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promis
   const oldBySig = new Map(oldEdges.map((e) => [JSON.stringify([e.source_id, e.target_id, e.relation, e.label]), e]));
   const kept = new Set<string>();
   const edgeInserts: Record<string, unknown>[] = [];
+  let edgeOrdinal = await nextOrdinal(ctx, "graph_edges");
   for (const spec of edgeSpecs) {
     const src = byKey.get(spec.source) as NodeRow;
     const dst = byKey.get(spec.target) as NodeRow;
@@ -226,14 +233,17 @@ export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promis
     const id = old?.id ?? randomUUID();
     const properties = { ...spec.properties, ...(old?.properties?.hidden ? { hidden: true } : {}) };
     if (old) await tx.exec(sql`UPDATE graph_edges SET weight = ${spec.weight}, properties = ${sql.json(properties)} WHERE id = ${id}`);
-    else edgeInserts.push({ id, organization_id: ctx.orgId, mission_id: mid, source_id: src.id, target_id: dst.id, relation: spec.relation, label: spec.label, weight: spec.weight, properties, origin: "engine" });
+    else edgeInserts.push({ id, organization_id: ctx.orgId, mission_id: mid, source_id: src.id, target_id: dst.id, relation: spec.relation, label: spec.label, weight: spec.weight, properties, origin: "engine", ordinal: edgeOrdinal++ });
     kept.add(id);
     const evidence = spec.sources.map((s) => citeSource(ctx, s)).filter((ev): ev is Evidence => ev !== null);
     if (evidence.length) ctx.link(evidence, TargetType.graph_edge, id);
   }
   await tx.insertMany(
     "graph_edges",
-    { id: "uuid", organization_id: "uuid", mission_id: "uuid", source_id: "uuid", target_id: "uuid", relation: "text", label: "text", weight: "double precision", properties: "json", origin: "text" },
+    {
+      id: "uuid", organization_id: "uuid", mission_id: "uuid", source_id: "uuid", target_id: "uuid", relation: "text", label: "text",
+      weight: "double precision", properties: "json", origin: "text", ordinal: "integer",
+    },
     edgeInserts,
     "id",
   );

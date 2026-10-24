@@ -12,7 +12,9 @@
     "e2e": "playwright test",
     "db:migrate": "tsx scripts/migrate.ts",
     "test:ui": "vitest run --project ui",
-    "test:server": "vitest run --project server"
+    "test:server": "vitest run --project server",
+    "seed": "tsx scripts/seed.ts",
+    "retention": "tsx scripts/retention.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "7.9.14",

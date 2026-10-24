@@ -269,6 +269,7 @@ CREATE TABLE graph_nodes (
   origin varchar(16) NOT NULL DEFAULT 'engine',   -- engine | user
   x double precision,
   y double precision,
+  ordinal integer NOT NULL DEFAULT 0,             -- creation order
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -285,6 +286,7 @@ CREATE TABLE graph_edges (
   weight double precision NOT NULL DEFAULT 1,
   properties json NOT NULL DEFAULT '{}',
   origin varchar(16) NOT NULL DEFAULT 'engine',
+  ordinal integer NOT NULL DEFAULT 0,             -- creation order
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );

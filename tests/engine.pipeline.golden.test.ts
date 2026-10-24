@@ -4,6 +4,7 @@ import { closePool, db, sql } from "@/server/db";
 import type { MissionRow } from "@/server/rows";
 import { seed } from "@/server/seed";
 import { analyzeSync, importFolderAndAnalyze } from "@/server/services/pipeline";
+import { executiveSummary } from "@/server/services/summary";
 import { resetDb } from "./helpers/db";
 import { dumpEvidence, dumpOpportunities, dumpPainPoints, dumpRecommendations, dumpRisks, dumpRoadmap } from "./helpers/dump";
 import { COMPANIES, DEMO_DIR, golden } from "./helpers/golden";
@@ -42,6 +43,17 @@ describe.each(COMPANIES)("%s", (company) => {
   it("recommendations and roadmap", async () => {
     expect(await dumpRecommendations(mid())).toEqual(ref.recommendations);
     expect(await dumpRoadmap(mid())).toEqual(ref.roadmap);
+  });
+
+  it("executive summary", async () => {
+    const mission = await db.one<MissionRow>(sql`SELECT * FROM audit_missions WHERE id = ${mid()}`);
+    const summary = await executiveSummary(mission);
+    const strip = (s: typeof summary) => ({
+      ...s,
+      top_opportunities: s.top_opportunities.map(({ id: _, ...o }) => o),
+      top_pain_points: s.top_pain_points.map(({ id: _, ...p }) => p),
+    });
+    expect(strip(summary)).toEqual(ref.summary);
   });
 
   it("all evidence and its links", async () => {

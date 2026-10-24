@@ -546,3 +546,11 @@ export interface Member {
   role: Role;
   department_scope: string | null;
 }
+
+/** GET /api/config: how this deployment signs users in and receives files. */
+export interface AppConfig {
+  auth: "clerk" | "local" | "none";
+  uploads: "blob" | "multipart";
+  max_upload_mb: number;
+  max_files_per_upload: number;
+}

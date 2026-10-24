@@ -2,13 +2,11 @@
 
 import { FolderUp, Upload } from "lucide-react";
 import { useRef, useState } from "react";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import { JobProgress } from "@/components/sources/JobProgress";
 import { ErrorBox } from "@/components/ui";
-import { api } from "@/lib/api";
-import type { UploadResult } from "@/lib/types";
-
-type Picked = { file: File; path: string };
+import type { AppConfig, UploadResult } from "@/lib/types";
+import { type Picked, sendFiles } from "@/lib/upload";
 
 // Drag & drop of folders: walk FileSystemEntry trees to keep relative paths.
 async function walkEntry(entry: FileSystemEntry, prefix = ""): Promise<Picked[]> {
@@ -32,6 +30,8 @@ export function UploadPanel({ missionId }: { missionId: string }) {
   const [result, setResult] = useState<UploadResult | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [sending, setSending] = useState(false);
+  const [progress, setProgress] = useState<[number, number] | null>(null);
+  const { data: config } = useSWR<AppConfig>("/config");
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement>(null);
 
@@ -40,13 +40,9 @@ export function UploadPanel({ missionId }: { missionId: string }) {
     if (!files.length) return;
     setSending(true);
     setError(null);
+    setProgress(null);
     try {
-      const form = new FormData();
-      for (const p of files) {
-        form.append("files", p.file, p.file.name);
-        form.append("paths", p.path);
-      }
-      setResult(await api.post<UploadResult>(`/missions/${missionId}/documents`, form));
+      setResult(await sendFiles(missionId, files, config, (done, total) => setProgress([done, total])));
     } catch (err) {
       setError(err);
     } finally {
@@ -103,7 +99,7 @@ export function UploadPanel({ missionId }: { missionId: string }) {
           onChange={(e) => send(Array.from(e.target.files ?? []).map((f) => ({ file: f, path: f.webkitRelativePath || f.name })))}
         />
       </div>
-      {sending && <div className="text-sm text-muted">Envoi en cours…</div>}
+      {sending && <div className="text-sm text-muted">Envoi en cours{progress ? ` : ${progress[0]}/${progress[1]} fichier(s)` : "…"}</div>}
       {error ? <ErrorBox error={error} /> : null}
       {result && (
         <div className="space-y-2">

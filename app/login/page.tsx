@@ -1,10 +1,21 @@
 "use client";
 
+import { SignIn } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { mutate } from "swr";
 import { Button, ErrorBox } from "@/components/ui";
 import { api } from "@/lib/api";
+import { CLERK_ENABLED } from "@/lib/auth";
+
+function safeNext(next: string | null): string {
+  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+}
+
+function ClerkSignIn() {
+  const params = useSearchParams();
+  return <SignIn routing="hash" forceRedirectUrl={safeNext(params.get("next"))} />;
+}
 
 const DEMO_ACCOUNTS = [
   ["consultant@auditflow.demo", "Consultant — 3 missions"],
@@ -28,8 +39,7 @@ function LoginForm() {
     try {
       await api.post("/auth/login", { email, password });
       await mutate("/auth/me");
-      const next = params.get("next");
-      router.replace(next && next.startsWith("/") && !next.startsWith("//") ? next : "/");
+      router.replace(safeNext(params.get("next")));
     } catch (err) {
       setError(err);
     } finally {
@@ -77,9 +87,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
-      <Suspense>
-        <LoginForm />
-      </Suspense>
+      <Suspense>{CLERK_ENABLED ? <ClerkSignIn /> : <LoginForm />}</Suspense>
     </main>
   );
 }
