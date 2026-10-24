@@ -151,6 +151,13 @@ export function fmean(values: number[]): number {
   return fsum(values) / values.length;
 }
 
+/** statistics.mean: the exact mean, correctly rounded (unlike fmean, which rounds the sum first). */
+export function mean(values: number[]): number {
+  if (values.length === 0) throw new Error("mean requires at least one data point");
+  const { num, shift } = toRationals(values);
+  return ratioToDouble(num, BigInt(values.length) << BigInt(shift));
+}
+
 /** statistics.median. */
 export function median(values: number[]): number {
   if (values.length === 0) throw new Error("no median for empty data");

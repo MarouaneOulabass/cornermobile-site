@@ -1,4 +1,5 @@
 /** npm run db:migrate — apply pending migrations from db/ to DATABASE_URL. */
+import "./env";
 import { closePool } from "../server/db";
 import { migrate } from "../server/migrate";
 

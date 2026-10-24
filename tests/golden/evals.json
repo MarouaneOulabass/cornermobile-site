@@ -1,0 +1,1056 @@
+{
+  "companies": [
+    {
+      "company": "AtlasPro Distribution",
+      "slug": "atlaspro-distribution",
+      "sources": 37,
+      "answer_key_ingested": false,
+      "issues": {
+        "recall": 1.0,
+        "recall_direct": 1.0,
+        "precision_strict": 0.625,
+        "precision_supported": 1.0,
+        "pain_points": 8,
+        "matches": [
+          {
+            "planted": "Devis manuels",
+            "severity": "high",
+            "matched": "Devis préparés manuellement : 76 % ressaisis, 4 modèles différents, 37 min médianes",
+            "score": 0.767,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 4
+          },
+          {
+            "planted": "Relances impayés non priorisées",
+            "severity": "high",
+            "matched": "Relances d'impayés non priorisées : 7,47 M MAD de créances échues",
+            "score": 0.886,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 2
+          },
+          {
+            "planted": "Stock dormant",
+            "severity": "high",
+            "matched": "Stock dormant : 21,26 M MAD immobilisés (> 180 jours sans vente)",
+            "score": 0.85,
+            "hypothesis": false,
+            "criticality": "elevee",
+            "evidence": 1
+          },
+          {
+            "planted": "Reporting mensuel manuel",
+            "severity": "medium",
+            "matched": "Reporting mensuel manuel, avec des écarts récurrents vs l'ERP",
+            "score": 0.767,
+            "hypothesis": false,
+            "criticality": "elevee",
+            "evidence": 5
+          },
+          {
+            "planted": "SAV dispersé",
+            "severity": "high",
+            "matched": "Support éclaté sur 4 canaux, historique incomplet (17 % des tickets)",
+            "score": 0.792,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 6
+          }
+        ],
+        "extras": [
+          {
+            "title": "Potentiel commercial non exploité : 38 % de devis perdus, 33 % sans décision",
+            "evidence": 2,
+            "files": [
+              "data/quotes.csv"
+            ]
+          },
+          {
+            "title": "Délais contractuels suivis sans alerte : risque de pénalités",
+            "evidence": 8,
+            "files": [
+              "data/tickets.csv",
+              "documents/contracts/contract_01.md",
+              "documents/contracts/contract_02.md",
+              "documents/contracts/contract_03.md"
+            ]
+          },
+          {
+            "title": "Procédures incomplètes : 8 sans propriétaire, 4 non revues depuis plus de 24 mois",
+            "evidence": 6,
+            "files": [
+              "documents/procedures/procedure_01.md",
+              "documents/procedures/procedure_02.md",
+              "documents/procedures/procedure_03.md",
+              "documents/procedures/procedure_07.md"
+            ]
+          }
+        ]
+      },
+      "evidence": {
+        "evidence": 217,
+        "fidelity": 1.0,
+        "relevance": 1.0,
+        "failures": [],
+        "off_topic": []
+      },
+      "anchors": {
+        "checked": 11,
+        "accuracy": 1.0,
+        "rows": [
+          {
+            "label": "Part de devis ressaisis",
+            "reference": 0.7562,
+            "engine": 0.7562,
+            "ok": true,
+            "how": "count(manual_reentry = yes) / count(*)"
+          },
+          {
+            "label": "Modèles différents",
+            "reference": 4,
+            "engine": 4.0,
+            "ok": true,
+            "how": "count(distinct template_used)"
+          },
+          {
+            "label": "Temps médian de préparation",
+            "reference": 37.0,
+            "engine": 37.0,
+            "ok": true,
+            "how": "median(prep_minutes)"
+          },
+          {
+            "label": "Valeur du stock dormant",
+            "reference": 21264593.0,
+            "engine": 21264593.0,
+            "ok": true,
+            "how": "Σ stock_value_mad | days_since_last_sale ≥ 180"
+          },
+          {
+            "label": "Taux de transformation",
+            "reference": 0.4299,
+            "engine": 0.4299,
+            "ok": true,
+            "how": "count(Won) / count(Won ∪ Lost)"
+          },
+          {
+            "label": "Montant des créances échues",
+            "reference": 7465236.0,
+            "engine": 7465236.0,
+            "ok": true,
+            "how": "Σ amount_mad | status = OVERDUE"
+          },
+          {
+            "label": "Part des factures échues",
+            "reference": 0.3333,
+            "engine": 0.3333,
+            "ok": true,
+            "how": "count(status = OVERDUE) / count(*)"
+          },
+          {
+            "label": "Créances échues depuis 60 jours",
+            "reference": 4451627.0,
+            "engine": 4451627.0,
+            "ok": true,
+            "how": "Σ amount_mad | OVERDUE et days_overdue ≥ 60"
+          },
+          {
+            "label": "Canaux d'entrée",
+            "reference": 4,
+            "engine": 4.0,
+            "ok": true,
+            "how": "count(distinct channel)"
+          },
+          {
+            "label": "Tickets avec historique manquant",
+            "reference": 0.1722,
+            "engine": 0.1722,
+            "ok": true,
+            "how": "count(observed_issue = Missing history) / count(*)"
+          },
+          {
+            "label": "Délai médian de résolution",
+            "reference": 47.5,
+            "engine": 47.5,
+            "ok": true,
+            "how": "median(resolution_hours)"
+          }
+        ]
+      },
+      "roi": {
+        "checked": 8,
+        "accuracy": 1.0,
+        "mismatches": []
+      },
+      "hallucination": {
+        "items": 108,
+        "unsupported": [],
+        "unsupported_rate": 0.0,
+        "numbers": 89,
+        "untraceable": [],
+        "untraceable_rate": 0.0
+      },
+      "sensitivity": {
+        "perturbations": 20,
+        "kendall_tau_min": 0.857,
+        "kendall_tau_mean": 0.986,
+        "top3_kept": 0.95,
+        "top1_kept": 1.0
+      },
+      "synthesis": {
+        "score": 1.0,
+        "checks": {
+          "synthèse présente": true,
+          "synthèse concise (300–900 caractères)": true,
+          "potentiel total annoncé": true,
+          "irritants critiques nommés": true,
+          "décision recommandée": true,
+          "la décision cite une opportunité P1": true,
+          "chaque P1 a une recommandation chiffrée": true,
+          "hypothèses signalées": true
+        }
+      },
+      "values": {
+        "coverage": 1.0,
+        "median_ratio": 0.64,
+        "within_factor_2": 1.0,
+        "engine_total": 1596184,
+        "expected_total": 1400000,
+        "rows": [
+          {
+            "expected": "Copilote de devis",
+            "expected_value": 210000.0,
+            "matched": "Copilote de devis",
+            "engine_value": 124290,
+            "ratio": 0.59,
+            "priority": "P1"
+          },
+          {
+            "expected": "Priorisation intelligente des relances",
+            "expected_value": 330000.0,
+            "matched": "Priorisation des relances d'impayés (marge × risque × ancienneté)",
+            "engine_value": 378498,
+            "ratio": 1.15,
+            "priority": "P1"
+          },
+          {
+            "expected": "Détection stock dormant & recommandations",
+            "expected_value": 480000.0,
+            "matched": "Détection du stock dormant & recommandations de déstockage",
+            "engine_value": 425292,
+            "ratio": 0.89,
+            "priority": "P1"
+          },
+          {
+            "expected": "Reporting direction automatisé",
+            "expected_value": 120000.0,
+            "matched": "Reporting direction automatisé",
+            "engine_value": 76608,
+            "ratio": 0.64,
+            "priority": "P2"
+          },
+          {
+            "expected": "Assistant SAV omnicanal",
+            "expected_value": 260000.0,
+            "matched": "Assistant SAV omnicanal",
+            "engine_value": 139194,
+            "ratio": 0.54,
+            "priority": "P2"
+          }
+        ]
+      },
+      "ranking": {
+        "opp:quote_copilot": [
+          39.7,
+          2,
+          "P1",
+          124290
+        ],
+        "opp:quote_followup": [
+          35.4,
+          5,
+          "P2",
+          274128
+        ],
+        "opp:receivables_priority": [
+          38.3,
+          3,
+          "P1",
+          378498
+        ],
+        "opp:dormant_stock": [
+          42.1,
+          1,
+          "P1",
+          425292
+        ],
+        "opp:support_assistant": [
+          36.9,
+          4,
+          "P2",
+          139194
+        ],
+        "opp:sla_radar": [
+          27.0,
+          8,
+          "P3",
+          148762
+        ],
+        "opp:reporting_automation": [
+          31.3,
+          6,
+          "P2",
+          76608
+        ],
+        "opp:procedures_refresh": [
+          27.8,
+          7,
+          "P3",
+          29412
+        ]
+      },
+      "error": null,
+      "seconds": 0.9,
+      "deterministic": true
+    },
+    {
+      "company": "Darna Facility Services",
+      "slug": "darna-facility-services",
+      "sources": 37,
+      "answer_key_ingested": false,
+      "issues": {
+        "recall": 1.0,
+        "recall_direct": 1.0,
+        "precision_strict": 0.556,
+        "precision_supported": 1.0,
+        "pain_points": 9,
+        "matches": [
+          {
+            "planted": "Planification manuelle",
+            "severity": "high",
+            "matched": "Planification manuelle : 100 % des interventions planifiées via Excel, WhatsApp, Téléphone",
+            "score": 0.778,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 5
+          },
+          {
+            "planted": "Comptes rendus terrain non structurés",
+            "severity": "high",
+            "matched": "Comptes rendus terrain non structurés (WhatsApp, transmission tardive)",
+            "score": 0.9,
+            "hypothesis": false,
+            "criticality": "elevee",
+            "evidence": 4
+          },
+          {
+            "planted": "SLA mal suivis",
+            "severity": "high",
+            "matched": "SLA non tenus et suivis trop tard : 66 % des interventions hors délai",
+            "score": 0.767,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 5
+          },
+          {
+            "planted": "Achats urgents coûteux",
+            "severity": "medium",
+            "matched": "Achats urgents coûteux : 41 % des commandes, surcoût moyen 18,1 %",
+            "score": 0.827,
+            "hypothesis": false,
+            "criticality": "elevee",
+            "evidence": 2
+          },
+          {
+            "planted": "Facturation retardée",
+            "severity": "high",
+            "matched": "Facturation retardée : justificatifs d'intervention transmis tardivement à la finance",
+            "score": 1.0,
+            "hypothesis": false,
+            "criticality": "elevee",
+            "evidence": 5
+          }
+        ],
+        "extras": [
+          {
+            "title": "Relances d'impayés non priorisées : 7,20 M MAD de créances échues",
+            "evidence": 2,
+            "files": [
+              "data/invoices.csv",
+              "documents/emails/email_04.txt"
+            ]
+          },
+          {
+            "title": "Support éclaté sur 4 canaux, historique incomplet (16 % des tickets)",
+            "evidence": 6,
+            "files": [
+              "company_profile.md",
+              "data/tickets.csv",
+              "documents/emails/email_02.txt"
+            ]
+          },
+          {
+            "title": "Reporting mensuel manuel, avec des écarts récurrents vs l'ERP",
+            "evidence": 5,
+            "files": [
+              "documents/contracts/contract_01.md",
+              "documents/procedures/procedure_03.md",
+              "documents/procedures/procedure_07.md",
+              "documents/reports/monthly_report_01.md"
+            ]
+          },
+          {
+            "title": "Procédures incomplètes : 8 sans propriétaire, 4 non revues depuis plus de 24 mois",
+            "evidence": 6,
+            "files": [
+              "documents/procedures/procedure_01.md",
+              "documents/procedures/procedure_02.md",
+              "documents/procedures/procedure_04.md",
+              "documents/procedures/procedure_05.md"
+            ]
+          }
+        ]
+      },
+      "evidence": {
+        "evidence": 226,
+        "fidelity": 1.0,
+        "relevance": 1.0,
+        "failures": [],
+        "off_topic": []
+      },
+      "anchors": {
+        "checked": 12,
+        "accuracy": 1.0,
+        "rows": [
+          {
+            "label": "Part des interventions hors SLA",
+            "reference": 0.6591,
+            "engine": 0.6591,
+            "ok": true,
+            "how": "count(sla_breached = yes) / count(*)"
+          },
+          {
+            "label": "Dépassement moyen",
+            "reference": 29.5103,
+            "engine": 29.5,
+            "ok": true,
+            "how": "mean(actual − sla | sla_breached = yes)"
+          },
+          {
+            "label": "Part planifiée hors outil",
+            "reference": 1.0,
+            "engine": 1.0,
+            "ok": true,
+            "how": "count(planning_source ∈ {Excel, WhatsApp, Phone}) / count(*)"
+          },
+          {
+            "label": "Part des achats urgents",
+            "reference": 0.4083,
+            "engine": 0.4083,
+            "ok": true,
+            "how": "count(urgent_purchase = yes) / count(*)"
+          },
+          {
+            "label": "Surcoût moyen des achats urgents",
+            "reference": 18.1429,
+            "engine": 18.14,
+            "ok": true,
+            "how": "mean(price_premium_pct | urgent)"
+          },
+          {
+            "label": "Factures établies hors ERP",
+            "reference": 0.6417,
+            "engine": 0.6417,
+            "ok": true,
+            "how": "count(source ≠ ERP) / count(*)"
+          },
+          {
+            "label": "Montant des créances échues",
+            "reference": 7201523.0,
+            "engine": 7201523.0,
+            "ok": true,
+            "how": "Σ amount_mad | status = OVERDUE"
+          },
+          {
+            "label": "Part des factures échues",
+            "reference": 0.325,
+            "engine": 0.325,
+            "ok": true,
+            "how": "count(status = OVERDUE) / count(*)"
+          },
+          {
+            "label": "Créances échues depuis 60 jours",
+            "reference": 3198379.0,
+            "engine": 3198379.0,
+            "ok": true,
+            "how": "Σ amount_mad | OVERDUE et days_overdue ≥ 60"
+          },
+          {
+            "label": "Canaux d'entrée",
+            "reference": 4,
+            "engine": 4.0,
+            "ok": true,
+            "how": "count(distinct channel)"
+          },
+          {
+            "label": "Tickets avec historique manquant",
+            "reference": 0.1611,
+            "engine": 0.1611,
+            "ok": true,
+            "how": "count(observed_issue = Missing history) / count(*)"
+          },
+          {
+            "label": "Délai médian de résolution",
+            "reference": 50.0,
+            "engine": 50.0,
+            "ok": true,
+            "how": "median(resolution_hours)"
+          }
+        ]
+      },
+      "roi": {
+        "checked": 9,
+        "accuracy": 1.0,
+        "mismatches": []
+      },
+      "hallucination": {
+        "items": 125,
+        "unsupported": [],
+        "unsupported_rate": 0.0,
+        "numbers": 83,
+        "untraceable": [],
+        "untraceable_rate": 0.0
+      },
+      "sensitivity": {
+        "perturbations": 20,
+        "kendall_tau_min": 0.944,
+        "kendall_tau_mean": 0.975,
+        "top3_kept": 1.0,
+        "top1_kept": 1.0
+      },
+      "synthesis": {
+        "score": 1.0,
+        "checks": {
+          "synthèse présente": true,
+          "synthèse concise (300–900 caractères)": true,
+          "potentiel total annoncé": true,
+          "irritants critiques nommés": true,
+          "décision recommandée": true,
+          "la décision cite une opportunité P1": true,
+          "chaque P1 a une recommandation chiffrée": true,
+          "hypothèses signalées": true
+        }
+      },
+      "values": {
+        "coverage": 1.0,
+        "median_ratio": 0.5,
+        "within_factor_2": 0.6,
+        "engine_total": 1364798,
+        "expected_total": 1220000,
+        "rows": [
+          {
+            "expected": "Agent de planification des interventions",
+            "expected_value": 360000.0,
+            "matched": "Agent de planification des interventions",
+            "engine_value": 203052,
+            "ratio": 0.56,
+            "priority": "P1"
+          },
+          {
+            "expected": "Compte rendu terrain assisté par IA",
+            "expected_value": 190000.0,
+            "matched": "Compte rendu terrain assisté par IA",
+            "engine_value": 64680,
+            "ratio": 0.34,
+            "priority": "P2"
+          },
+          {
+            "expected": "Radar SLA & pénalités",
+            "expected_value": 280000.0,
+            "matched": "Radar SLA & pénalités",
+            "engine_value": 141001,
+            "ratio": 0.5,
+            "priority": "P2"
+          },
+          {
+            "expected": "Prévision des besoins en pièces",
+            "expected_value": 170000.0,
+            "matched": "Anticipation des besoins en pièces (stock de sécurité, achats groupés)",
+            "engine_value": 322494,
+            "ratio": 1.9,
+            "priority": "P1"
+          },
+          {
+            "expected": "Dossier d’intervention vers facturation",
+            "expected_value": 220000.0,
+            "matched": "Dossier d'intervention vers facturation",
+            "engine_value": 79502,
+            "ratio": 0.36,
+            "priority": "P2"
+          }
+        ]
+      },
+      "ranking": {
+        "opp:receivables_priority": [
+          48.4,
+          3,
+          "P1",
+          310394
+        ],
+        "opp:support_assistant": [
+          45.9,
+          4,
+          "P1",
+          145179
+        ],
+        "opp:sla_radar": [
+          38.8,
+          5,
+          "P2",
+          141001
+        ],
+        "opp:planning_optimiser": [
+          52.8,
+          1,
+          "P1",
+          203052
+        ],
+        "opp:field_reports": [
+          34.4,
+          7,
+          "P2",
+          64680
+        ],
+        "opp:invoicing_flow": [
+          30.9,
+          8,
+          "P2",
+          79502
+        ],
+        "opp:parts_anticipation": [
+          49.3,
+          2,
+          "P1",
+          322494
+        ],
+        "opp:reporting_automation": [
+          38.7,
+          6,
+          "P2",
+          76608
+        ],
+        "opp:procedures_refresh": [
+          29.2,
+          9,
+          "P3",
+          21888
+        ]
+      },
+      "error": null,
+      "seconds": 0.8,
+      "deterministic": true
+    },
+    {
+      "company": "MaghrebPack Industries",
+      "slug": "maghrebpack-industries",
+      "sources": 38,
+      "answer_key_ingested": false,
+      "issues": {
+        "recall": 1.0,
+        "recall_direct": 0.8,
+        "precision_strict": 0.5,
+        "precision_supported": 1.0,
+        "pain_points": 10,
+        "matches": [
+          {
+            "planted": "Planification de production instable",
+            "severity": "high",
+            "matched": "Planning de production instable : 1,4 replanification(s) par ordre, 65 % en dépassement",
+            "score": 0.529,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 3
+          },
+          {
+            "planted": "Pannes répétitives mal capitalisées",
+            "severity": "high",
+            "matched": "Pannes répétitives mal capitalisées : 68 % sans cause identifiée",
+            "score": 0.946,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 3
+          },
+          {
+            "planted": "Non-conformités récurrentes",
+            "severity": "high",
+            "matched": "Non-conformités récurrentes : 42 % se répètent sous 90 jours",
+            "score": 1.0,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 3
+          },
+          {
+            "planted": "Prévisions commerciales faibles",
+            "severity": "medium",
+            "matched": "Visibilité commerciale insuffisante sur la charge (hypothèse à valider)",
+            "score": 0.6,
+            "hypothesis": true,
+            "criticality": "moyenne",
+            "evidence": 1
+          },
+          {
+            "planted": "Consommation matière mal expliquée",
+            "severity": "high",
+            "matched": "Consommation matière mal expliquée : rebut moyen 5,6 % (cible 3,0 %)",
+            "score": 0.769,
+            "hypothesis": false,
+            "criticality": "critique",
+            "evidence": 4
+          }
+        ],
+        "extras": [
+          {
+            "title": "Relances d'impayés non priorisées : 6,29 M MAD de créances échues",
+            "evidence": 3,
+            "files": [
+              "data/invoices.csv",
+              "documents/emails/email_04.txt",
+              "documents/emails/email_05.txt"
+            ]
+          },
+          {
+            "title": "Support éclaté sur 4 canaux, historique incomplet (14 % des tickets)",
+            "evidence": 6,
+            "files": [
+              "company_profile.md",
+              "data/tickets.csv",
+              "documents/emails/email_04.txt"
+            ]
+          },
+          {
+            "title": "Délais contractuels suivis sans alerte : risque de pénalités",
+            "evidence": 8,
+            "files": [
+              "data/tickets.csv",
+              "documents/contracts/contract_01.md",
+              "documents/contracts/contract_02.md",
+              "documents/contracts/contract_03.md"
+            ]
+          },
+          {
+            "title": "Reporting mensuel manuel, avec des écarts récurrents vs l'ERP",
+            "evidence": 5,
+            "files": [
+              "documents/contracts/contract_01.md",
+              "documents/procedures/procedure_03.md",
+              "documents/procedures/procedure_07.md",
+              "documents/reports/monthly_report_01.md"
+            ]
+          },
+          {
+            "title": "Procédures incomplètes : 8 sans propriétaire, 3 non revues depuis plus de 24 mois",
+            "evidence": 6,
+            "files": [
+              "documents/procedures/procedure_01.md",
+              "documents/procedures/procedure_02.md",
+              "documents/procedures/procedure_05.md",
+              "documents/procedures/procedure_06.md"
+            ]
+          }
+        ]
+      },
+      "evidence": {
+        "evidence": 247,
+        "fidelity": 1.0,
+        "relevance": 1.0,
+        "failures": [],
+        "off_topic": []
+      },
+      "anchors": {
+        "checked": 12,
+        "accuracy": 1.0,
+        "rows": [
+          {
+            "label": "Pannes sans cause racine",
+            "reference": 0.6786,
+            "engine": 0.6786,
+            "ok": true,
+            "how": "count(root_cause_known = no) / count(*)"
+          },
+          {
+            "label": "Heures d'arrêt totales",
+            "reference": 936.0,
+            "engine": 936.0,
+            "ok": true,
+            "how": "Σ downtime_hours"
+          },
+          {
+            "label": "Non-conformités répétées",
+            "reference": 0.425,
+            "engine": 0.425,
+            "ok": true,
+            "how": "count(repeat_within_90d = yes) / count(*)"
+          },
+          {
+            "label": "Replanifications moyennes",
+            "reference": 1.45,
+            "engine": 1.45,
+            "ok": true,
+            "how": "mean(replans)"
+          },
+          {
+            "label": "Dérive des temps réels",
+            "reference": 0.1933,
+            "engine": 0.1933,
+            "ok": true,
+            "how": "(Σ actual_hours − Σ planned_hours) / Σ planned_hours"
+          },
+          {
+            "label": "Taux de rebut matière moyen",
+            "reference": 5.5642,
+            "engine": 5.56,
+            "ok": true,
+            "how": "mean(material_waste_pct)"
+          },
+          {
+            "label": "Montant des créances échues",
+            "reference": 6288990.0,
+            "engine": 6288990.0,
+            "ok": true,
+            "how": "Σ amount_mad | status = OVERDUE"
+          },
+          {
+            "label": "Part des factures échues",
+            "reference": 0.2917,
+            "engine": 0.2917,
+            "ok": true,
+            "how": "count(status = OVERDUE) / count(*)"
+          },
+          {
+            "label": "Créances échues depuis 60 jours",
+            "reference": 3100450.0,
+            "engine": 3100450.0,
+            "ok": true,
+            "how": "Σ amount_mad | OVERDUE et days_overdue ≥ 60"
+          },
+          {
+            "label": "Canaux d'entrée",
+            "reference": 4,
+            "engine": 4.0,
+            "ok": true,
+            "how": "count(distinct channel)"
+          },
+          {
+            "label": "Tickets avec historique manquant",
+            "reference": 0.1444,
+            "engine": 0.1444,
+            "ok": true,
+            "how": "count(observed_issue = Missing history) / count(*)"
+          },
+          {
+            "label": "Délai médian de résolution",
+            "reference": 42.5,
+            "engine": 42.5,
+            "ok": true,
+            "how": "median(resolution_hours)"
+          }
+        ]
+      },
+      "roi": {
+        "checked": 10,
+        "accuracy": 1.0,
+        "mismatches": []
+      },
+      "hallucination": {
+        "items": 137,
+        "unsupported": [],
+        "unsupported_rate": 0.0,
+        "numbers": 103,
+        "untraceable": [],
+        "untraceable_rate": 0.0
+      },
+      "sensitivity": {
+        "perturbations": 20,
+        "kendall_tau_min": 0.867,
+        "kendall_tau_mean": 0.956,
+        "top3_kept": 0.6,
+        "top1_kept": 1.0
+      },
+      "synthesis": {
+        "score": 1.0,
+        "checks": {
+          "synthèse présente": true,
+          "synthèse concise (300–900 caractères)": true,
+          "potentiel total annoncé": true,
+          "irritants critiques nommés": true,
+          "décision recommandée": true,
+          "la décision cite une opportunité P1": true,
+          "chaque P1 a une recommandation chiffrée": true,
+          "hypothèses signalées": true
+        }
+      },
+      "values": {
+        "coverage": 1.0,
+        "median_ratio": 0.4,
+        "within_factor_2": 0.4,
+        "engine_total": 2054573,
+        "expected_total": 2110000,
+        "rows": [
+          {
+            "expected": "Assistant d’ordonnancement",
+            "expected_value": 620000.0,
+            "matched": "Assistant d'ordonnancement",
+            "engine_value": 245304,
+            "ratio": 0.4,
+            "priority": "P2"
+          },
+          {
+            "expected": "Copilote maintenance & diagnostic",
+            "expected_value": 410000.0,
+            "matched": "Copilote maintenance & diagnostic",
+            "engine_value": 418770,
+            "ratio": 1.02,
+            "priority": "P1"
+          },
+          {
+            "expected": "Analyse IA des non-conformités",
+            "expected_value": 350000.0,
+            "matched": "Analyse IA des non-conformités",
+            "engine_value": 133800,
+            "ratio": 0.38,
+            "priority": "P2"
+          },
+          {
+            "expected": "Prévision demande & charge",
+            "expected_value": 290000.0,
+            "matched": "Prévision demande & charge",
+            "engine_value": 77598,
+            "ratio": 0.27,
+            "priority": "P3"
+          },
+          {
+            "expected": "Détection dérives consommation matière",
+            "expected_value": 440000.0,
+            "matched": "Détection des dérives de consommation matière",
+            "engine_value": 493056,
+            "ratio": 1.12,
+            "priority": "P1"
+          }
+        ]
+      },
+      "ranking": {
+        "opp:receivables_priority": [
+          25.5,
+          6,
+          "P2",
+          286586
+        ],
+        "opp:support_assistant": [
+          31.6,
+          2,
+          "P1",
+          152361
+        ],
+        "opp:sla_radar": [
+          21.9,
+          9,
+          "P3",
+          108247
+        ],
+        "opp:maintenance_copilot": [
+          31.1,
+          3,
+          "P1",
+          418770
+        ],
+        "opp:quality_analysis": [
+          23.1,
+          7,
+          "P2",
+          133800
+        ],
+        "opp:scheduling_assistant": [
+          22.1,
+          8,
+          "P2",
+          245304
+        ],
+        "opp:material_drift": [
+          36.5,
+          1,
+          "P1",
+          493056
+        ],
+        "opp:demand_forecast": [
+          6.8,
+          10,
+          "P3",
+          77598
+        ],
+        "opp:reporting_automation": [
+          28.7,
+          5,
+          "P2",
+          76608
+        ],
+        "opp:procedures_refresh": [
+          31.0,
+          4,
+          "P1",
+          62244
+        ]
+      },
+      "error": null,
+      "seconds": 0.8,
+      "deterministic": true
+    }
+  ],
+  "summary": {
+    "recall": 1.0,
+    "recall_direct": 0.933,
+    "precision_strict": 0.56,
+    "precision_supported": 1.0,
+    "evidence_fidelity": 1.0,
+    "evidence_relevance": 1.0,
+    "anchor_accuracy": 1.0,
+    "roi_accuracy": 1.0,
+    "unsupported_rate": 0.0,
+    "untraceable_rate": 0.0,
+    "deterministic": true,
+    "kendall_tau_min": 0.857,
+    "top3_kept": 0.85,
+    "synthesis": 1.0,
+    "value_median_ratio": 0.513,
+    "answer_key_isolated": true,
+    "errors": [],
+    "passed": {
+      "recall": true,
+      "precision_supported": true,
+      "evidence_fidelity": true,
+      "evidence_relevance": true,
+      "anchor_accuracy": true,
+      "roi_accuracy": true,
+      "unsupported_rate": true,
+      "untraceable_rate": true,
+      "deterministic": true,
+      "kendall_tau_min": true,
+      "synthesis": true,
+      "answer_key_isolated": true,
+      "errors": true
+    }
+  },
+  "thresholds": {
+    "recall": 1.0,
+    "precision_supported": 1.0,
+    "evidence_fidelity": 1.0,
+    "evidence_relevance": 0.9,
+    "anchor_accuracy": 1.0,
+    "roi_accuracy": 1.0,
+    "unsupported_rate": 0.0,
+    "untraceable_rate": 0.0,
+    "deterministic": true,
+    "kendall_tau_min": 0.6,
+    "synthesis": 1.0
+  }
+}

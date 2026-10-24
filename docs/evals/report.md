@@ -1,6 +1,6 @@
 # Évaluation AuditFlow sur le jeu de démonstration
 
-_Généré le 2026-10-24 10:04 UTC par `python -m evals` (backend/evals)._
+_Généré le 2026-10-24 12:41 UTC par `npm run evals` (evals/)._
 
 Le moteur analyse chaque entreprise exactement comme en production (import du dossier, analyse déterministe, aucun LLM). Le corrigé `ground_truth.json` n'est lu que par le module d'évaluation, après coup. Les mesures suivent le §14 du cahier des charges.
 
@@ -28,7 +28,7 @@ La précision stricte compte comme faux positif tout irritant absent du corrigé
 
 ## AtlasPro Distribution
 
-37 sources analysées en 0.8 s · 8 irritants · 217 preuves liées · 89 nombres contrôlés dans les textes générés.
+37 sources analysées en 0.9 s · 8 irritants · 217 preuves liées · 89 nombres contrôlés dans les textes générés.
 
 ### Irritants plantés
 
@@ -80,7 +80,7 @@ Stabilité : déterministe = oui ; 20 perturbations, τ min 0.857, τ moyen 0.98
 
 ## Darna Facility Services
 
-37 sources analysées en 0.7 s · 9 irritants · 226 preuves liées · 83 nombres contrôlés dans les textes générés.
+37 sources analysées en 0.6 s · 9 irritants · 226 preuves liées · 83 nombres contrôlés dans les textes générés.
 
 ### Irritants plantés
 
@@ -134,7 +134,7 @@ Stabilité : déterministe = oui ; 20 perturbations, τ min 0.944, τ moyen 0.97
 
 ## MaghrebPack Industries
 
-38 sources analysées en 0.8 s · 10 irritants · 247 preuves liées · 103 nombres contrôlés dans les textes générés.
+38 sources analysées en 0.6 s · 10 irritants · 247 preuves liées · 103 nombres contrôlés dans les textes générés.
 
 ### Irritants plantés
 
@@ -192,7 +192,7 @@ Stabilité : déterministe = oui ; 20 perturbations, τ min 0.867, τ moyen 0.95
 - **Recall / précision** : appariement lexical (racines de mots, domaine) entre chaque irritant planté et les irritants produits, affectation un-à-un ; les scores d'appariement sont publiés ci-dessus.
 - **Fidélité des preuves** : chaque preuve liée est relue dans le fichier d'origine, indépendamment de l'ingestion — lignes de texte identiques, cellules CSV identiques (ligne, colonne, valeur), colonnes et numéros de ligne existants.
 - **Pertinence** : une preuve rattachée à un irritant doit partager du vocabulaire métier avec lui.
-- **Exactitude des calculs** : une douzaine de faits clés par entreprise recalculés avec la bibliothèque standard (`evals/anchors.py`) ; chaque business case recalculé à partir de ses hypothèses avec les formules documentées (heures × coût horaire × 12, payback = coût projet / (gain net / 12), ROI 12/36 mois).
+- **Exactitude des calculs** : une douzaine de faits clés par entreprise recalculés avec un lecteur CSV distinct de l'ingestion (`evals/anchors.ts`) ; chaque business case recalculé à partir de ses hypothèses avec les formules documentées (heures × coût horaire × 12, payback = coût projet / (gain net / 12), ROI 12/36 mois).
 - **Hallucinations** : (1) irritants, métriques, opportunités et hypothèses « fait/calcul » sans preuve liée ; (2) chaque nombre des titres, descriptions et recommandations doit correspondre, à la précision affichée près, à une valeur calculée, une preuve, une hypothèse, un seuil déclaré ou un nombre écrit dans une source texte.
 - **Stabilité** : ré-import du même dossier (tout est dédupliqué) puis ré-analyse ⇒ scores, rangs et étiquettes identiques ; chaque coefficient de priorisation est ensuite varié de ±20 %.
 - **Synthèse dirigeant** : grille de contrôle (potentiel annoncé, irritants critiques nommés, décision citant une P1, chaque P1 chiffrée, hypothèses signalées, longueur).

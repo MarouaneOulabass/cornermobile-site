@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Runs against a running stack with the demo seeded and analyzed (python -m app.seed --reset --analyze).
+// Runs against a running app (npm run build && npm start, local demo accounts: AUDITFLOW_DEV_AUTH=1) whose
+// database holds the analyzed demo (npm run seed -- --reset --analyze). E2E_PASSWORD = AUDITFLOW_DEMO_PASSWORD.
 export default defineConfig({
   testDir: "./e2e",
   timeout: 60_000,

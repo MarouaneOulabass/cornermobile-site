@@ -8,46 +8,63 @@ corrige ou rejette chaque conclusion avant publication.
 
 Pour travailler sur le projet (humain ou Claude Code), lire d'abord [`CLAUDE.md`](CLAUDE.md).
 
-Construit à partir du cahier des charges `docs/kit/specs-claude.md` (ordre de construction du §18), de la
-maquette `docs/kit/mockup.html` et du jeu de démonstration `demo-data/` (3 entreprises fictives).
+Construit à partir du cahier des charges `docs/kit/specs-claude.md`, de la maquette `docs/kit/mockup.html` et du
+jeu de démonstration `demo-data/` (3 entreprises fictives).
 
-## Démarrage rapide
+## Stack
 
-### Avec Docker
+Entièrement en TypeScript, déployée sur Vercel :
 
-```bash
-cp .env.example .env && ./deploy/gen-secrets.sh >> .env
-docker compose up --build
-docker compose exec api python -m app.seed --analyze   # charge et analyse les 3 entreprises de démo
-```
+| Couche | Choix |
+|---|---|
+| Application | Next.js 16 (App Router, Turbopack), React 19, TypeScript 5.9, Tailwind 4, SWR, React Flow, Lucide |
+| API | route handlers Next.js (`app/api/[...path]/route.ts`), validation Zod, traitements longs via `after()` |
+| Base | PostgreSQL — Neon en production (`@neondatabase/serverless`), `pg` en local ; SQL écrit à la main, migrations numérotées dans `db/` |
+| Identité | Clerk, une organisation Clerk par entreprise cliente (comptes locaux de démonstration hors Vercel) |
+| Fichiers | Vercel Blob (privé), envoi direct depuis le navigateur ; disque local en développement |
+| IA | Vercel AI SDK via AI Gateway (modèles Claude), uniquement pour classer des documents ambigus |
+| Documents | unpdf (PDF), mammoth + cheerio (DOCX), read-excel-file (XLSX), jszip (métadonnées Office) ; rapport PDF avec @react-pdf/renderer + pdf-lib |
+| Tests | Vitest (unitaires, intégration PostgreSQL, parité avec l'implémentation de référence), Playwright, évaluations |
 
-Puis <http://localhost:3000>. Les comptes de démo utilisent le mot de passe `AUDITFLOW_DEMO_PASSWORD` de `.env`.
-Stockage objet S3 (MinIO, chiffrement au repos) : `docker compose -f docker-compose.yml -f docker-compose.s3.yml up --build`.
+## Démarrage sous Windows (PowerShell)
 
-### En local (développement)
+Prérequis : **Node 22+** et **PostgreSQL 16**. Rien d'autre (pas de Python, pas de Docker, pas de bibliothèque
+système pour les PDF).
 
-Prérequis : Python 3.11+, [uv](https://docs.astral.sh/uv/), Node 22, PostgreSQL 16, et Pango pour les PDF
-(`apt install libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core`). Installation pas à pas sur Windows
-(PowerShell natif ou WSL2) : voir [`CLAUDE.md`](CLAUDE.md), §4.
+```powershell
+# 1. Outils (une fois), puis rouvrir PowerShell
+winget install -e --id Git.Git
+winget install -e --id OpenJS.NodeJS.LTS
+winget install -e --id PostgreSQL.PostgreSQL.16 --interactive   # noter le mot de passe « postgres »
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned               # autorise npm dans PowerShell
 
-```bash
-# API
-cd backend
-cp .env.example .env                            # base locale, AUDITFLOW_SECRET_KEY=$(openssl rand -hex 32)
-uv sync --extra dev
-uv run python -m app.seed --reset --analyze     # migrations + démo analysée (≈ 10 s)
-uv run uvicorn app.main:app --reload            # http://localhost:8000/api/docs
-
-# Web
-cd frontend
+# 2. Code
+New-Item -ItemType Directory -Force "$HOME\projets" | Out-Null
+cd "$HOME\projets"
+git clone -b claude/new-session-s0mlha https://github.com/MarouaneOulabass/cornermobile-site.git auditflow
+cd auditflow
 npm ci
-npm run dev                                     # http://localhost:3000, proxy /api → localhost:8000
+
+# 3. Bases locales (une fois ; demande le mot de passe « postgres »)
+$pg = "C:\Program Files\PostgreSQL\16\bin"
+& "$pg\psql.exe" -U postgres -c "CREATE USER auditflow WITH PASSWORD 'auditflow' CREATEDB;"
+& "$pg\createdb.exe" -U postgres -O auditflow auditflow
+& "$pg\createdb.exe" -U postgres -O auditflow auditflow_test
+
+# 4. Configuration (une fois)
+Copy-Item .env.example .env.local
+npm run secrets                       # ajoute AUDITFLOW_SESSION_SECRET et CRON_SECRET à .env.local
+
+# 5. Démo analysée, puis l'application
+npm run db:migrate
+npm run seed -- --reset --analyze     # 3 entreprises importées et analysées (quelques secondes)
+npm run dev                           # http://localhost:3000
 ```
 
-Sans Redis, les traitements tournent dans un thread de l'API (`AUDITFLOW_JOB_BACKEND=thread`) ; en production,
-`rq` + `python -m app.worker`.
+Les jours suivants, `npm run dev` suffit (PostgreSQL tourne comme service Windows). Sous Linux/macOS, les mêmes
+commandes npm s'appliquent (`cp .env.example .env.local`, bases créées avec `sudo -u postgres …`).
 
-### Comptes de démonstration
+### Comptes de démonstration (mode local)
 
 | Compte | Rôle | Voit |
 |---|---|---|
@@ -57,7 +74,7 @@ Sans Redis, les traitements tournent dans un thread de l'API (`AUDITFLOW_JOB_BAC
 | `finance@atlaspro.demo` | Responsable métier (Finance) | AtlasPro, constats Finance uniquement |
 | `dirigeant@darna.demo`, `dirigeant@maghrebpack.demo` | Dirigeant | leur entreprise |
 
-Mot de passe : `demo-auditflow` en développement, `AUDITFLOW_DEMO_PASSWORD` sinon.
+Mot de passe : `demo-auditflow`, ou la valeur de `AUDITFLOW_DEMO_PASSWORD`.
 
 ## Parcours (spec §9 et §15)
 
@@ -79,29 +96,54 @@ conservées lors des analyses suivantes et tracées (qui, quand, quoi).
 ## Architecture
 
 ```
-frontend/   Next.js 16 · React 19 · TypeScript · Tailwind 4 · SWR · React Flow
-backend/    FastAPI · SQLAlchemy 2 · Alembic · PostgreSQL · RQ/Redis · S3 ou disque · WeasyPrint
-  app/ingestion/   parseurs CSV/XLSX/DOCX/PDF/TXT/MD/EML, classification, découpage
-  app/engine/      sémantique des colonnes, extraction, graphe, 16 détecteurs, opportunités, ROI, scoring, roadmap
-  app/ai/          fournisseur LLM optionnel (classification uniquement), embeddings locaux
-  app/services/    ingestion, pipeline, revue humaine, rapport, rétention, stockage
-  evals/           évaluation sur le corrigé du kit (seul code autorisé à lire ground_truth.json)
+app/              pages (App Router) et l'API : app/api/[...path]/route.ts → server/api
+components/, lib/ interface (client) : SWR, primitives UI, envoi des fichiers
+server/           tout le code serveur
+  api/            routeur, schémas Zod, une route par domaine (auth, orgs, missions, documents, analysis…)
+  auth/           Clerk ou comptes locaux, contexte de mission (isolation par organisation)
+  ingestion/      parseurs CSV/XLSX/DOCX/PDF/TXT/MD/EML, classification, découpage, embeddings locaux
+  engine/         sémantique des colonnes, extraction, graphe, 16 détecteurs, opportunités, ROI, scoring, roadmap
+  services/       pipeline, revue humaine, business case, rapport, rétention, recherche
+  report/         rapport HTML (JSX → chaîne) et PDF (@react-pdf/renderer, polices embarquées)
+db/               migrations SQL numérotées
+evals/            évaluation sur le corrigé du kit (seul code autorisé à lire ground_truth.json)
+scripts/          migrate, seed, evals, retention, secrets (npm run …)
+tests/, e2e/      Vitest (dont parité avec tests/golden) et Playwright
 docs/evals/       dernier rapport d'évaluation
 ```
 
 - **Aucun chiffre ne vient d'un LLM.** Détection et calculs sont déterministes (règles sur les concepts des
-  colonnes, pas sur les noms de fichiers). Le LLM (Claude, désactivé par défaut) ne sert qu'à classer les
-  documents ambigus, sur un texte dont les données personnelles sont masquées.
+  colonnes, pas sur les noms de fichiers). Le LLM (désactivé par défaut) ne sert qu'à classer les documents
+  ambigus, sur un texte dont les données personnelles sont masquées.
 - **Multi-tenant** : chaque ligne porte `organization_id` ; toute requête passe par un contexte de mission qui
   répond 404 hors de l'organisation de l'utilisateur.
 - **Recherche** : BM25 + vecteurs (embeddings locaux par hachage, sans appel externe) fusionnés par RRF ; chaque
   résultat cite fichier et lignes.
 
+## Déploiement sur Vercel
+
+1. Importer le dépôt dans Vercel (projet dédié, framework Next.js ; `vercel.json` fixe la commande de build).
+2. Ajouter depuis le Marketplace / Storage : **Neon** (fournit `DATABASE_URL`, une branche par preview),
+   **Vercel Blob** en accès privé (`BLOB_READ_WRITE_TOKEN`) et **Clerk** (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`,
+   `CLERK_SECRET_KEY`). Dans Clerk : activer les Organizations ; rôles `org:admin`/`org:consultant` →
+   consultant, `org:executive`/`org:member` → dirigeant, `org:business_owner` → responsable métier (département
+   dans les métadonnées publiques de l'adhésion, clé `department`).
+3. Variables à ajouter : `CRON_SECRET` (le cron quotidien de rétention s'authentifie avec), et si besoin
+   `AUDITFLOW_LLM_PROVIDER=gateway` (AI Gateway, authentifié automatiquement sur Vercel).
+4. Déployer : le build applique les migrations (`npm run db:migrate && npm run build`).
+5. Démo (facultatif) : `vercel env pull .env.local` puis `npm run seed -- --analyze` depuis le poste, ce qui
+   remplit Neon et Blob. Les entreprises de démo n'ont pas d'organisation Clerk : seul un administrateur
+   plateforme les voit — mettre `{"platformAdmin": true}` dans les métadonnées publiques de l'utilisateur Clerk
+   **avant** sa première connexion.
+
+Sur Vercel, les comptes locaux sont toujours désactivés et l'envoi des fichiers passe directement du navigateur à
+Blob (une fonction Vercel n'accepte que 4,5 Mo par requête).
+
 ## Évaluation (spec §14)
 
-`cd backend && uv run python -m evals --out ../docs/evals` relance tout le pipeline sur les 3 entreprises dans
-une base jetable, puis note le résultat contre `ground_truth.json` et contre des recalculs indépendants depuis
-les fichiers bruts. Dernier résultat ([rapport complet](docs/evals/report.md)) :
+`npm run evals -- --out docs/evals` relance tout le pipeline sur les 3 entreprises dans une base jetable
+(`EVALS_DATABASE_URL`, sinon `TEST_DATABASE_URL`), puis note le résultat contre `ground_truth.json` et contre des
+recalculs indépendants depuis les fichiers bruts. Dernier résultat ([rapport complet](docs/evals/report.md)) :
 
 | Mesure | Résultat |
 |---|---|
@@ -114,29 +156,31 @@ les fichiers bruts. Dernier résultat ([rapport complet](docs/evals/report.md)) 
 | Nombres non traçables dans les textes générés | 0 |
 | Ré-analyse identique / τ de Kendall min. sous ±20 % de coefficients | oui / 0,86 |
 
-Le test `tests/test_evals.py` vérifie aussi que l'évaluateur détecte des fautes injectées (extrait falsifié,
-métrique dérivée, ROI incohérent, chiffre inventé, irritant sans preuve).
+`tests/evals.test.ts` vérifie aussi que l'évaluateur détecte des fautes injectées (extrait falsifié, métrique
+dérivée, ROI incohérent, chiffre inventé, irritant sans preuve) et que ses résultats sont identiques à ceux de
+l'implémentation de référence (`tests/golden/evals.json`).
 
 ## Sécurité (spec §12)
 
 RBAC (administrateur, consultant, dirigeant, responsable métier avec périmètre de département) ; isolation
-stricte par organisation ; session en cookie httpOnly + en-tête anti-CSRF ; en-têtes de sécurité et CSP stricte
-sur le rapport ; journal d'audit sans contenu ; masquage des données personnelles avant tout appel LLM et dans
-les logs ; chiffrement au repos des fichiers en S3 (SSE) ; rétention configurable par organisation
-(`python -m app.services.retention`, à planifier chaque jour) ; suppression complète d'une mission (base +
-fichiers) ; secrets uniquement par variables d'environnement (`AUDITFLOW_*`).
+stricte par organisation ; Clerk en production, cookie de session httpOnly signé pour les comptes locaux ; en-tête
+anti-CSRF sur les écritures ; en-têtes de sécurité et CSP stricte sur le rapport ; journal d'audit sans contenu ;
+masquage des données personnelles avant tout appel LLM et dans les logs ; fichiers en Blob privé ; rétention
+configurable par organisation (cron Vercel quotidien) ; suppression complète d'une mission (base + fichiers) ;
+secrets uniquement par variables d'environnement.
 
 ## Tests et CI
 
-```bash
-cd backend && uv run pytest                       # SQLite ; TEST_DATABASE_URL=postgresql+psycopg://… pour PostgreSQL
-cd backend && uv run ruff check . && uv run ruff format --check .
-cd frontend && npm run lint && npm run typecheck && npm test
-cd frontend && npm run e2e                        # Playwright, sur une pile démarrée avec la démo analysée
+```powershell
+npm run lint; npm run typecheck
+npm test                              # Vitest : unitaires + intégration sur TEST_DATABASE_URL (vidée)
+npm run evals                         # évaluations ; code retour 1 si un seuil est raté
+npx playwright install chromium       # une fois
+npm run e2e                           # sur `npm run build; npm start` avec la démo fraîchement seedée
 ```
 
-`.github/workflows/ci.yml` exécute lint, tests (SQLite et PostgreSQL), vérification des migrations, évaluations,
-build du front, parcours Playwright et build des images Docker.
+`.github/workflows/ci.yml` exécute lint, typecheck, tests, évaluations, build et le parcours Playwright (Node 22 +
+PostgreSQL 16).
 
 ## Limites connues
 
@@ -144,8 +188,7 @@ build du front, parcours Playwright et build des images Docker.
   (`ground_truth.json`, `manifest.json`) exclu.
 - Les procédures et emails du kit sont très similaires d'une entreprise à l'autre ; l'essentiel du signal vient
   des CSV. Les valeurs par opportunité sont en général plus prudentes que les estimations du kit (ratio médian
-  ≈ 0,5), les totaux par entreprise restant proches (1,60 / 1,37 / 2,06 M MAD/an contre 1,40 / 1,22 / 2,11) ;
-  l'écart est publié dans le rapport d'évaluation, pas masqué.
-- Images Docker et compose non exécutés dans l'environnement de développement (pas de démon Docker) : ils sont
-  construits et démarrés par la CI.
-- Pas d'OCR des PDF scannés, pas de connecteurs ERP directs, pas de SSO (hors périmètre MVP, spec §17).
+  ≈ 0,5), les totaux par entreprise restant proches (1,60 / 1,37 / 2,06 M MAD/an contre 1,40 / 1,22 / 2,11).
+- Clerk, Vercel Blob, l'AI Gateway et le déploiement Vercel n'ont pas été exercés avec de vraies clés : le code
+  suit leur documentation et les tests couvrent le mode local.
+- Pas d'OCR des PDF scannés, pas de connecteurs ERP directs (hors périmètre MVP, spec §17).

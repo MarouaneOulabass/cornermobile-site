@@ -5,6 +5,7 @@
  * --reset    empties every table first (local and test databases only)
  * --analyze  imports each company's demo folder (the answer key excluded) and runs the analysis
  */
+import "./env";
 import path from "node:path";
 import { closePool, db } from "../server/db";
 import { env } from "../server/env";

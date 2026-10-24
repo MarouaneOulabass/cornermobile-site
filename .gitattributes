@@ -4,5 +4,6 @@
 *.png binary
 *.xlsx binary
 *.docx binary
+*.ttf binary
 # The demo kit is kept byte-for-byte as delivered (its CSVs use CRLF).
 demo-data/** -text

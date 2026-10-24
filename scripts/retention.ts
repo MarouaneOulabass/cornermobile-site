@@ -1,4 +1,5 @@
 /** npm run retention -- [--dry-run] : delete missions idle for longer than their organization's retention period. */
+import "./env";
 import { closePool } from "../server/db";
 import { purge } from "../server/services/retention";
 

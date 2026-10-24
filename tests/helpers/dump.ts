@@ -1,4 +1,4 @@
-/** Dumps the engine output of a mission in the shape of the golden files (see backend/scripts/export_golden.py). */
+/** Dumps the engine output of a mission in the shape of the golden files (see tests/golden/README.md). */
 import { db, sql } from "@/server/db";
 
 type Row = Record<string, unknown>;
