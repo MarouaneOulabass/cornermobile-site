@@ -92,3 +92,60 @@ export interface PainPointRow {
   generated: Record<string, unknown>;
   edited_fields: string[];
 }
+
+export interface OpportunityRow {
+  id: string;
+  organization_id: string;
+  mission_id: string;
+  code: string;
+  title: string;
+  summary: string;
+  category: string;
+  category_rationale: string;
+  department: string | null;
+  effort: string;
+  target_delivery: string | null;
+  scores: Record<string, number>;
+  priority_score: number;
+  priority_rank: number | null;
+  priority_label: string | null;
+  architecture: string[];
+  pilot_plan: { step: string; weeks: number }[];
+  kpis: string[];
+  confidence: number;
+  ordinal: number;
+  validation_status: string;
+  generated: Record<string, unknown>;
+  edited_fields: string[];
+}
+
+export interface AssumptionRow {
+  id: string;
+  organization_id: string;
+  mission_id: string;
+  opportunity_id: string;
+  key: string;
+  label: string;
+  value: number;
+  default_value: number;
+  unit: string;
+  nature: string;
+  source: string;
+  metric_id: string | null;
+  confidence: number;
+  group: string;
+  min_value: number | null;
+  max_value: number | null;
+  ordinal: number;
+  validation_status: string;
+  generated: Record<string, unknown>;
+  edited_fields: string[];
+}
+
+export interface RoiModelRow {
+  id: string;
+  opportunity_id: string;
+  model_type: string;
+  results: Record<string, unknown>;
+  breakdown: Record<string, unknown>[];
+}

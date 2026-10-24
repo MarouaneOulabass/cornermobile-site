@@ -418,6 +418,7 @@ CREATE TABLE opportunities (
   pilot_plan json NOT NULL DEFAULT '[]',
   kpis json NOT NULL DEFAULT '[]',
   confidence double precision NOT NULL DEFAULT 0.5,
+  ordinal integer NOT NULL DEFAULT 0,
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,

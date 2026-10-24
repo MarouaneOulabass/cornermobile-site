@@ -10,7 +10,7 @@
  */
 import { Criticality as Cr, PainPointType as T } from "../domain/enums";
 import { mad, n0, n1, pct } from "../lib/fmt";
-import { Counter, fmean, maxBy, pstdev, pyFixed, pyFloatStr, pyG, pyRound, pyRoundInt, pyStrip, quantiles, sortedBy, sum } from "../lib/py";
+import { Counter, fmean, maxBy, pstdev, pyBool, pyFixed, pyFloatStr, pyG, pyOr, pyRound, pyRoundInt, pyStrip, quantiles, sortedBy, sum } from "../lib/py";
 import { reSearch } from "../lib/pyre";
 import { bench } from "./benchmarks";
 import { type AnalysisContext, type Dataset, type Evidence, isTrue, mean, median, type TextDoc, toFloat } from "./context";
@@ -113,18 +113,8 @@ export class Env {
 
 // --- Python semantics helpers -------------------------------------------------------------------------------
 
-/** Python truthiness as 0/1 (bool arithmetic). */
-function b(x: unknown): number {
-  if (Array.isArray(x)) return x.length ? 1 : 0;
-  if (x instanceof Map || x instanceof Set) return x.size ? 1 : 0;
-  if (typeof x === "number") return x !== 0 ? 1 : 0; // NaN is truthy in Python
-  return x ? 1 : 0;
-}
-
-/** Python `x or d` for an optional number. */
-function or(x: number | null | undefined, d: number): number {
-  return x === null || x === undefined || x === 0 ? d : x;
-}
+const b = pyBool;
+const or = pyOr;
 
 function lower(s: string): string {
   return s.toLowerCase();

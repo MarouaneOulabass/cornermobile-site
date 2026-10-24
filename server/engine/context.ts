@@ -269,8 +269,11 @@ export class AnalysisContext {
     }
   }
 
-  /** Evidence linked to targets, by decreasing relevance then link order (as the reference queries returned it). */
-  linked(targetType: string, targetIds: string[]): Evidence[] {
+  /**
+   * Evidence linked to targets, by decreasing relevance then link order (as the reference queries returned it),
+   * or in link order alone.
+   */
+  linked(targetType: string, targetIds: string[], byRelevance = true): Evidence[] {
     const ids = new Set(targetIds);
     const found: Evidence[] = [];
     for (const l of this.links) {
@@ -278,6 +281,7 @@ export class AnalysisContext {
       const ev = this.byId.get(l.evidence_id);
       if (ev) found.push(ev);
     }
+    if (!byRelevance) return found;
     return found.map((ev, i) => ({ ev, i })).sort((a, b) => b.ev.relevance - a.ev.relevance || a.i - b.i).map((x) => x.ev);
   }
 

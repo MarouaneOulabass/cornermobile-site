@@ -131,3 +131,46 @@ export async function dumpRisks(mid: string): Promise<Row[]> {
     }))
     .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0));
 }
+
+export async function dumpOpportunities(mid: string): Promise<Row[]> {
+  const opps = await db.query<Row & { id: string; code: string }>(sql`
+    SELECT o.*, r.breakdown, r.results FROM opportunities o LEFT JOIN roi_models r ON r.opportunity_id = o.id WHERE o.mission_id = ${mid}`);
+  const pains = await db.query<{ opportunity_id: string; code: string }>(sql`
+    SELECT op.opportunity_id, p.code FROM opportunity_pain_points op JOIN pain_points p ON p.id = op.pain_point_id WHERE p.mission_id = ${mid}`);
+  const assumptions = await db.query<Row & { opportunity_id: string }>(sql`
+    SELECT a.*, p.code || '#' || m.key AS metric_ref FROM assumptions a
+    LEFT JOIN metrics m ON m.id = a.metric_id LEFT JOIN pain_points p ON p.id = m.pain_point_id
+    WHERE a.mission_id = ${mid} ORDER BY a.ordinal`);
+  opps.sort((a, b) => (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));
+  return opps.map((o) => ({
+    code: o.code, title: o.title, summary: o.summary, category: o.category, category_rationale: o.category_rationale, department: o.department,
+    effort: o.effort, target_delivery: o.target_delivery, architecture: o.architecture, pilot_plan: o.pilot_plan, kpis: o.kpis, scores: o.scores,
+    priority_score: o.priority_score, priority_rank: o.priority_rank, priority_label: o.priority_label, confidence: o.confidence, generated: o.generated,
+    pain_points: pains.filter((p) => p.opportunity_id === o.id).map((p) => p.code).sort(),
+    assumptions: assumptions
+      .filter((a) => a.opportunity_id === o.id)
+      .map((a) => ({
+        key: a.key, label: a.label, value: a.value, default_value: a.default_value, unit: a.unit, nature: a.nature, source: a.source, group: a.group,
+        confidence: a.confidence, min_value: a.min_value, max_value: a.max_value, ordinal: a.ordinal, metric: a.metric_ref ?? null,
+      })),
+    roi: o.breakdown !== null && o.breakdown !== undefined ? { breakdown: o.breakdown, results: o.results } : null,
+  }));
+}
+
+export async function dumpRecommendations(mid: string): Promise<Row[]> {
+  return (
+    await db.query<Row & { generated: Row }>(sql`
+      SELECT r.*, o.code AS opp_code FROM recommendations r LEFT JOIN opportunities o ON o.id = r.opportunity_id WHERE r.mission_id = ${mid} ORDER BY r.ordinal`)
+  ).map((r) => ({ key: r.generated.key ?? null, title: r.title, text: r.text, ordinal: r.ordinal, opportunity: r.opp_code ?? null }));
+}
+
+export async function dumpRoadmap(mid: string): Promise<Row[]> {
+  return (
+    await db.query<Row & { generated: Row }>(sql`
+      SELECT i.*, o.code AS opp_code FROM roadmap_items i LEFT JOIN opportunities o ON o.id = i.opportunity_id
+      WHERE i.mission_id = ${mid} ORDER BY i.start_week, i.ordinal`)
+  ).map((i) => ({
+    key: i.generated.key ?? null, title: i.title, description: i.description, phase: i.phase, kind: i.kind, start_week: i.start_week,
+    duration_weeks: i.duration_weeks, owner: i.owner, depends_on: i.depends_on, ordinal: i.ordinal, opportunity: i.opp_code ?? null,
+  }));
+}

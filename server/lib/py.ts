@@ -327,3 +327,24 @@ export function pyStrip(text: string): string {
 export function stripAccents(text: string): string {
   return text.normalize("NFKD").replace(/\p{Mn}/gu, "");
 }
+
+// --- truthiness ---------------------------------------------------------------------------------------------
+
+/** Python truthiness (empty containers, 0, "" and None are false; NaN is true). */
+export function truthy(x: unknown): boolean {
+  if (Array.isArray(x) || typeof x === "string") return x.length > 0;
+  if (x instanceof Map || x instanceof Set) return x.size > 0;
+  if (typeof x === "number") return x !== 0;
+  if (x !== null && typeof x === "object") return Object.keys(x).length > 0;
+  return Boolean(x);
+}
+
+/** Python bool used in arithmetic (0 or 1). */
+export function pyBool(x: unknown): number {
+  return truthy(x) ? 1 : 0;
+}
+
+/** Python `x or d` for an optional number. */
+export function pyOr(x: number | null | undefined, d: number): number {
+  return x === null || x === undefined || x === 0 ? d : x;
+}
