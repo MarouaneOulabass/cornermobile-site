@@ -1,0 +1,6 @@
+From: collaborateur3@demo.ma
+To: equipe@demo.ma
+Subject: Intervention en retard
+Date: 2026-08-01
+
+Le technicien indique sur WhatsApp que l’intervention est terminée mais nous n’avons pas encore le compte rendu.

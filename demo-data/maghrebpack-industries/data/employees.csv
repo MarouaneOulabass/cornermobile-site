@@ -1,0 +1,183 @@
+﻿employee_id,name,department,role,seniority_years,primary_tool
+E001,Manager Direction,Direction,Manager,9,Teams
+E002,Collaborateur 2,Direction,Technicien,6,ERP
+E003,Collaborateur 3,Direction,Assistant,9,Outlook
+E004,Collaborateur 4,Direction,Analyste,3,Power BI
+E005,Collaborateur 5,Direction,Assistant,2,Outlook
+E006,Collaborateur 6,Direction,Analyste,7,Excel
+E007,Collaborateur 7,Direction,Chargé,12,Power BI
+E008,Collaborateur 8,Direction,Coordinateur,7,ERP
+E009,Collaborateur 9,Direction,Assistant,9,Outlook
+E010,Collaborateur 10,Direction,Coordinateur,11,Outlook
+E011,Collaborateur 11,Direction,Technicien,5,ERP
+E012,Collaborateur 12,Direction,Coordinateur,6,ERP
+E013,Collaborateur 13,Direction,Technicien,10,Outlook
+E014,Collaborateur 14,Direction,Analyste,12,ERP
+E015,Collaborateur 15,Direction,Analyste,10,WhatsApp
+E016,Collaborateur 16,Direction,Analyste,1,ERP
+E017,Collaborateur 17,Direction,Technicien,9,WhatsApp
+E018,Collaborateur 18,Direction,Technicien,9,Excel
+E019,Manager Commerce,Commerce,Manager,15,Excel
+E020,Collaborateur 20,Commerce,Assistant,1,WhatsApp
+E021,Collaborateur 21,Commerce,Analyste,6,WhatsApp
+E022,Collaborateur 22,Commerce,Assistant,6,WhatsApp
+E023,Collaborateur 23,Commerce,Chargé,12,Excel
+E024,Collaborateur 24,Commerce,Analyste,8,Outlook
+E025,Collaborateur 25,Commerce,Chargé,8,Excel
+E026,Collaborateur 26,Commerce,Chargé,12,Excel
+E027,Collaborateur 27,Commerce,Coordinateur,11,Outlook
+E028,Collaborateur 28,Commerce,Chargé,2,Power BI
+E029,Collaborateur 29,Commerce,Coordinateur,12,ERP
+E030,Collaborateur 30,Commerce,Chargé,8,Outlook
+E031,Collaborateur 31,Commerce,Analyste,5,WhatsApp
+E032,Collaborateur 32,Commerce,Assistant,4,Excel
+E033,Collaborateur 33,Commerce,Chargé,11,WhatsApp
+E034,Collaborateur 34,Commerce,Analyste,5,Power BI
+E035,Collaborateur 35,Commerce,Assistant,8,ERP
+E036,Collaborateur 36,Commerce,Assistant,4,Power BI
+E037,Manager Bureau méthodes,Bureau méthodes,Manager,15,Outlook
+E038,Collaborateur 38,Bureau méthodes,Analyste,10,ERP
+E039,Collaborateur 39,Bureau méthodes,Analyste,3,Outlook
+E040,Collaborateur 40,Bureau méthodes,Assistant,4,Power BI
+E041,Collaborateur 41,Bureau méthodes,Coordinateur,4,Excel
+E042,Collaborateur 42,Bureau méthodes,Assistant,10,Outlook
+E043,Collaborateur 43,Bureau méthodes,Assistant,8,Excel
+E044,Collaborateur 44,Bureau méthodes,Technicien,11,Excel
+E045,Collaborateur 45,Bureau méthodes,Coordinateur,7,WhatsApp
+E046,Collaborateur 46,Bureau méthodes,Coordinateur,2,Power BI
+E047,Collaborateur 47,Bureau méthodes,Technicien,8,Outlook
+E048,Collaborateur 48,Bureau méthodes,Assistant,1,ERP
+E049,Collaborateur 49,Bureau méthodes,Analyste,5,WhatsApp
+E050,Collaborateur 50,Bureau méthodes,Assistant,8,Outlook
+E051,Collaborateur 51,Bureau méthodes,Analyste,7,ERP
+E052,Collaborateur 52,Bureau méthodes,Coordinateur,2,Power BI
+E053,Collaborateur 53,Bureau méthodes,Analyste,12,ERP
+E054,Collaborateur 54,Bureau méthodes,Technicien,2,ERP
+E055,Manager Production,Production,Manager,8,Outlook
+E056,Collaborateur 56,Production,Coordinateur,5,Excel
+E057,Collaborateur 57,Production,Analyste,1,WhatsApp
+E058,Collaborateur 58,Production,Technicien,1,Power BI
+E059,Collaborateur 59,Production,Coordinateur,5,ERP
+E060,Collaborateur 60,Production,Analyste,8,ERP
+E061,Collaborateur 61,Production,Coordinateur,1,Outlook
+E062,Collaborateur 62,Production,Assistant,4,Excel
+E063,Collaborateur 63,Production,Assistant,10,WhatsApp
+E064,Collaborateur 64,Production,Analyste,11,WhatsApp
+E065,Collaborateur 65,Production,Assistant,2,Excel
+E066,Collaborateur 66,Production,Analyste,1,WhatsApp
+E067,Collaborateur 67,Production,Coordinateur,12,Excel
+E068,Collaborateur 68,Production,Chargé,1,WhatsApp
+E069,Collaborateur 69,Production,Analyste,5,Power BI
+E070,Collaborateur 70,Production,Technicien,2,Excel
+E071,Collaborateur 71,Production,Analyste,9,Excel
+E072,Collaborateur 72,Production,Coordinateur,7,WhatsApp
+E073,Manager Qualité,Qualité,Manager,6,ERP
+E074,Collaborateur 74,Qualité,Chargé,10,Power BI
+E075,Collaborateur 75,Qualité,Analyste,8,WhatsApp
+E076,Collaborateur 76,Qualité,Technicien,7,Power BI
+E077,Collaborateur 77,Qualité,Assistant,2,Outlook
+E078,Collaborateur 78,Qualité,Analyste,8,Power BI
+E079,Collaborateur 79,Qualité,Coordinateur,10,ERP
+E080,Collaborateur 80,Qualité,Analyste,2,Excel
+E081,Collaborateur 81,Qualité,Assistant,12,Excel
+E082,Collaborateur 82,Qualité,Assistant,4,Power BI
+E083,Collaborateur 83,Qualité,Chargé,11,Power BI
+E084,Collaborateur 84,Qualité,Coordinateur,6,WhatsApp
+E085,Collaborateur 85,Qualité,Technicien,12,Power BI
+E086,Collaborateur 86,Qualité,Technicien,3,ERP
+E087,Collaborateur 87,Qualité,Chargé,1,Excel
+E088,Collaborateur 88,Qualité,Chargé,5,Power BI
+E089,Collaborateur 89,Qualité,Technicien,9,Outlook
+E090,Collaborateur 90,Qualité,Coordinateur,10,Power BI
+E091,Manager Maintenance,Maintenance,Manager,7,Outlook
+E092,Collaborateur 92,Maintenance,Technicien,5,Power BI
+E093,Collaborateur 93,Maintenance,Coordinateur,5,Outlook
+E094,Collaborateur 94,Maintenance,Analyste,9,Power BI
+E095,Collaborateur 95,Maintenance,Chargé,1,ERP
+E096,Collaborateur 96,Maintenance,Assistant,9,Excel
+E097,Collaborateur 97,Maintenance,Technicien,6,ERP
+E098,Collaborateur 98,Maintenance,Chargé,11,ERP
+E099,Collaborateur 99,Maintenance,Analyste,6,ERP
+E100,Collaborateur 100,Maintenance,Technicien,12,WhatsApp
+E101,Collaborateur 101,Maintenance,Assistant,12,Outlook
+E102,Collaborateur 102,Maintenance,Assistant,10,Outlook
+E103,Collaborateur 103,Maintenance,Assistant,5,WhatsApp
+E104,Collaborateur 104,Maintenance,Coordinateur,3,Excel
+E105,Collaborateur 105,Maintenance,Technicien,1,WhatsApp
+E106,Collaborateur 106,Maintenance,Chargé,1,ERP
+E107,Collaborateur 107,Maintenance,Chargé,8,Power BI
+E108,Collaborateur 108,Maintenance,Chargé,4,WhatsApp
+E109,Manager Supply,Supply,Manager,10,ERP
+E110,Collaborateur 110,Supply,Chargé,7,ERP
+E111,Collaborateur 111,Supply,Analyste,6,Excel
+E112,Collaborateur 112,Supply,Analyste,6,Excel
+E113,Collaborateur 113,Supply,Assistant,2,ERP
+E114,Collaborateur 114,Supply,Coordinateur,8,ERP
+E115,Collaborateur 115,Supply,Assistant,6,Excel
+E116,Collaborateur 116,Supply,Analyste,4,ERP
+E117,Collaborateur 117,Supply,Coordinateur,3,ERP
+E118,Collaborateur 118,Supply,Coordinateur,12,ERP
+E119,Collaborateur 119,Supply,Coordinateur,9,ERP
+E120,Collaborateur 120,Supply,Chargé,4,Excel
+E121,Collaborateur 121,Supply,Chargé,5,Excel
+E122,Collaborateur 122,Supply,Analyste,11,ERP
+E123,Collaborateur 123,Supply,Technicien,11,Excel
+E124,Collaborateur 124,Supply,Coordinateur,4,Outlook
+E125,Collaborateur 125,Supply,Technicien,4,Outlook
+E126,Collaborateur 126,Supply,Coordinateur,11,ERP
+E127,Manager Finance,Finance,Manager,13,ERP
+E128,Collaborateur 128,Finance,Analyste,2,ERP
+E129,Collaborateur 129,Finance,Chargé,4,ERP
+E130,Collaborateur 130,Finance,Assistant,7,Outlook
+E131,Collaborateur 131,Finance,Coordinateur,10,WhatsApp
+E132,Collaborateur 132,Finance,Chargé,1,Power BI
+E133,Collaborateur 133,Finance,Assistant,4,Power BI
+E134,Collaborateur 134,Finance,Coordinateur,3,Outlook
+E135,Collaborateur 135,Finance,Chargé,1,Outlook
+E136,Collaborateur 136,Finance,Chargé,9,Power BI
+E137,Collaborateur 137,Finance,Technicien,4,Excel
+E138,Collaborateur 138,Finance,Technicien,11,Power BI
+E139,Collaborateur 139,Finance,Analyste,3,Power BI
+E140,Collaborateur 140,Finance,Technicien,11,Power BI
+E141,Collaborateur 141,Finance,Coordinateur,8,Power BI
+E142,Collaborateur 142,Finance,Technicien,3,Outlook
+E143,Collaborateur 143,Finance,Coordinateur,9,WhatsApp
+E144,Collaborateur 144,Finance,Technicien,8,Outlook
+E145,Manager RH,RH,Manager,14,ERP
+E146,Collaborateur 146,RH,Assistant,11,Excel
+E147,Collaborateur 147,RH,Chargé,4,ERP
+E148,Collaborateur 148,RH,Technicien,4,WhatsApp
+E149,Collaborateur 149,RH,Chargé,5,WhatsApp
+E150,Collaborateur 150,RH,Technicien,10,ERP
+E151,Collaborateur 151,RH,Coordinateur,5,Power BI
+E152,Collaborateur 152,RH,Analyste,3,Excel
+E153,Collaborateur 153,RH,Coordinateur,8,Power BI
+E154,Collaborateur 154,RH,Coordinateur,4,Power BI
+E155,Collaborateur 155,RH,Analyste,8,Power BI
+E156,Collaborateur 156,RH,Assistant,6,WhatsApp
+E157,Collaborateur 157,RH,Technicien,8,WhatsApp
+E158,Collaborateur 158,RH,Technicien,6,WhatsApp
+E159,Collaborateur 159,RH,Coordinateur,5,WhatsApp
+E160,Collaborateur 160,RH,Analyste,3,WhatsApp
+E161,Collaborateur 161,RH,Chargé,5,Excel
+E162,Collaborateur 162,RH,Coordinateur,2,Outlook
+E163,Manager IT,IT,Manager,13,Excel
+E164,Collaborateur 164,IT,Coordinateur,4,Excel
+E165,Collaborateur 165,IT,Analyste,2,Outlook
+E166,Collaborateur 166,IT,Analyste,9,ERP
+E167,Collaborateur 167,IT,Coordinateur,4,Outlook
+E168,Collaborateur 168,IT,Coordinateur,5,Outlook
+E169,Collaborateur 169,IT,Chargé,12,Power BI
+E170,Collaborateur 170,IT,Chargé,12,Power BI
+E171,Collaborateur 171,IT,Coordinateur,1,Outlook
+E172,Collaborateur 172,IT,Coordinateur,6,WhatsApp
+E173,Collaborateur 173,IT,Technicien,10,Excel
+E174,Collaborateur 174,IT,Technicien,11,Power BI
+E175,Collaborateur 175,IT,Chargé,7,ERP
+E176,Collaborateur 176,IT,Chargé,12,ERP
+E177,Collaborateur 177,IT,Technicien,4,Power BI
+E178,Collaborateur 178,IT,Assistant,9,WhatsApp
+E179,Collaborateur 179,IT,Technicien,6,Excel
+E180,Collaborateur 180,IT,Coordinateur,4,WhatsApp
+E181,Collaborateur 181,Supply,Opérateur,4,Excel
+E182,Collaborateur 182,Finance,Opérateur,9,ERP

@@ -1,0 +1,141 @@
+﻿event_id,machine,symptom,downtime_hours,report_format,root_cause_known
+MNT-0001,Compressor,Calibration,7,paper form,yes
+MNT-0002,Folder gluer,Calibration,12,free text,no
+MNT-0003,Die cutter,Motor,8,paper form,yes
+MNT-0004,Printer,Unknown,4,excel,yes
+MNT-0005,Folder gluer,Sensor,10,excel,yes
+MNT-0006,Die cutter,Calibration,2,excel,no
+MNT-0007,Folder gluer,Unknown,2,excel,yes
+MNT-0008,Printer,Motor,9,free text,yes
+MNT-0009,Compressor,Sensor,5,free text,no
+MNT-0010,Folder gluer,Calibration,4,excel,no
+MNT-0011,Printer,Jam,1,free text,no
+MNT-0012,Die cutter,Unknown,7,paper form,yes
+MNT-0013,Printer,Motor,5,free text,yes
+MNT-0014,Printer,Jam,5,excel,yes
+MNT-0015,Compressor,Calibration,3,excel,no
+MNT-0016,Die cutter,Jam,2,excel,no
+MNT-0017,Compressor,Jam,1,excel,no
+MNT-0018,Printer,Jam,12,excel,no
+MNT-0019,Printer,Unknown,5,paper form,no
+MNT-0020,Die cutter,Motor,5,paper form,yes
+MNT-0021,Die cutter,Motor,11,excel,no
+MNT-0022,Compressor,Motor,7,free text,yes
+MNT-0023,Compressor,Unknown,5,paper form,no
+MNT-0024,Printer,Calibration,1,paper form,no
+MNT-0025,Compressor,Motor,9,excel,yes
+MNT-0026,Compressor,Sensor,10,free text,no
+MNT-0027,Printer,Calibration,6,paper form,no
+MNT-0028,Die cutter,Motor,6,free text,no
+MNT-0029,Die cutter,Jam,9,free text,yes
+MNT-0030,Compressor,Unknown,4,free text,yes
+MNT-0031,Compressor,Unknown,8,excel,no
+MNT-0032,Printer,Jam,8,paper form,no
+MNT-0033,Folder gluer,Motor,3,free text,no
+MNT-0034,Compressor,Jam,5,excel,yes
+MNT-0035,Compressor,Unknown,8,paper form,no
+MNT-0036,Printer,Motor,8,excel,no
+MNT-0037,Die cutter,Jam,7,excel,yes
+MNT-0038,Compressor,Sensor,1,free text,no
+MNT-0039,Die cutter,Sensor,4,paper form,yes
+MNT-0040,Die cutter,Calibration,8,free text,no
+MNT-0041,Compressor,Sensor,12,excel,no
+MNT-0042,Compressor,Jam,5,free text,no
+MNT-0043,Folder gluer,Motor,9,paper form,no
+MNT-0044,Folder gluer,Unknown,11,free text,yes
+MNT-0045,Folder gluer,Unknown,11,free text,no
+MNT-0046,Folder gluer,Unknown,10,paper form,no
+MNT-0047,Compressor,Sensor,6,excel,no
+MNT-0048,Printer,Sensor,9,excel,no
+MNT-0049,Die cutter,Motor,7,free text,yes
+MNT-0050,Compressor,Jam,1,paper form,no
+MNT-0051,Printer,Sensor,12,free text,no
+MNT-0052,Compressor,Motor,2,free text,no
+MNT-0053,Compressor,Unknown,3,free text,no
+MNT-0054,Printer,Motor,11,free text,yes
+MNT-0055,Folder gluer,Motor,7,excel,no
+MNT-0056,Folder gluer,Motor,10,paper form,no
+MNT-0057,Printer,Jam,10,free text,yes
+MNT-0058,Printer,Motor,3,paper form,no
+MNT-0059,Die cutter,Sensor,9,excel,no
+MNT-0060,Compressor,Motor,10,excel,no
+MNT-0061,Folder gluer,Unknown,11,paper form,yes
+MNT-0062,Printer,Jam,4,free text,yes
+MNT-0063,Printer,Sensor,3,paper form,yes
+MNT-0064,Folder gluer,Jam,1,free text,no
+MNT-0065,Compressor,Calibration,11,paper form,no
+MNT-0066,Folder gluer,Unknown,2,free text,no
+MNT-0067,Compressor,Calibration,7,excel,no
+MNT-0068,Folder gluer,Motor,9,paper form,no
+MNT-0069,Die cutter,Unknown,4,free text,no
+MNT-0070,Folder gluer,Sensor,7,excel,no
+MNT-0071,Compressor,Motor,11,free text,no
+MNT-0072,Compressor,Motor,3,free text,no
+MNT-0073,Compressor,Motor,12,paper form,yes
+MNT-0074,Printer,Calibration,6,free text,no
+MNT-0075,Die cutter,Sensor,8,paper form,no
+MNT-0076,Printer,Jam,10,paper form,no
+MNT-0077,Die cutter,Motor,5,excel,yes
+MNT-0078,Folder gluer,Jam,11,paper form,no
+MNT-0079,Compressor,Calibration,1,excel,no
+MNT-0080,Folder gluer,Motor,11,free text,no
+MNT-0081,Die cutter,Calibration,10,excel,no
+MNT-0082,Compressor,Sensor,8,excel,no
+MNT-0083,Die cutter,Jam,6,free text,no
+MNT-0084,Printer,Sensor,3,free text,no
+MNT-0085,Die cutter,Jam,8,excel,no
+MNT-0086,Die cutter,Motor,2,excel,no
+MNT-0087,Printer,Unknown,12,free text,no
+MNT-0088,Folder gluer,Sensor,10,excel,no
+MNT-0089,Die cutter,Calibration,7,excel,no
+MNT-0090,Die cutter,Jam,4,excel,yes
+MNT-0091,Folder gluer,Jam,3,paper form,yes
+MNT-0092,Folder gluer,Unknown,4,excel,no
+MNT-0093,Compressor,Sensor,11,excel,yes
+MNT-0094,Folder gluer,Motor,9,paper form,yes
+MNT-0095,Folder gluer,Calibration,10,excel,yes
+MNT-0096,Compressor,Jam,2,free text,yes
+MNT-0097,Die cutter,Sensor,6,excel,no
+MNT-0098,Die cutter,Sensor,1,free text,no
+MNT-0099,Folder gluer,Calibration,2,excel,yes
+MNT-0100,Folder gluer,Sensor,12,excel,yes
+MNT-0101,Folder gluer,Jam,7,excel,no
+MNT-0102,Printer,Motor,3,excel,no
+MNT-0103,Compressor,Sensor,4,paper form,yes
+MNT-0104,Printer,Motor,5,excel,no
+MNT-0105,Folder gluer,Jam,8,paper form,no
+MNT-0106,Folder gluer,Motor,11,excel,no
+MNT-0107,Printer,Jam,10,paper form,yes
+MNT-0108,Printer,Calibration,6,excel,no
+MNT-0109,Folder gluer,Sensor,6,excel,no
+MNT-0110,Folder gluer,Jam,9,free text,no
+MNT-0111,Printer,Calibration,5,free text,yes
+MNT-0112,Printer,Calibration,3,paper form,no
+MNT-0113,Folder gluer,Motor,10,paper form,no
+MNT-0114,Die cutter,Motor,12,free text,no
+MNT-0115,Folder gluer,Jam,3,paper form,no
+MNT-0116,Folder gluer,Motor,11,free text,yes
+MNT-0117,Folder gluer,Motor,3,paper form,no
+MNT-0118,Printer,Jam,8,excel,no
+MNT-0119,Compressor,Calibration,8,free text,no
+MNT-0120,Folder gluer,Unknown,6,paper form,no
+MNT-0121,Compressor,Motor,1,free text,no
+MNT-0122,Die cutter,Calibration,7,paper form,no
+MNT-0123,Compressor,Unknown,1,free text,no
+MNT-0124,Printer,Motor,10,excel,no
+MNT-0125,Printer,Unknown,3,free text,no
+MNT-0126,Folder gluer,Jam,2,paper form,yes
+MNT-0127,Folder gluer,Calibration,7,free text,no
+MNT-0128,Die cutter,Sensor,4,free text,no
+MNT-0129,Folder gluer,Jam,3,free text,yes
+MNT-0130,Compressor,Jam,12,free text,yes
+MNT-0131,Folder gluer,Jam,8,free text,no
+MNT-0132,Die cutter,Calibration,9,excel,no
+MNT-0133,Printer,Calibration,11,paper form,no
+MNT-0134,Printer,Jam,7,free text,no
+MNT-0135,Printer,Calibration,6,paper form,no
+MNT-0136,Compressor,Unknown,7,excel,yes
+MNT-0137,Folder gluer,Calibration,11,excel,no
+MNT-0138,Die cutter,Sensor,10,free text,yes
+MNT-0139,Folder gluer,Motor,6,excel,yes
+MNT-0140,Compressor,Jam,11,free text,yes

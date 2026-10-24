@@ -1,0 +1,87 @@
+﻿employee_id,name,department,role,seniority_years,primary_tool
+E001,Manager Direction,Direction,Manager,15,Excel
+E002,Collaborateur 2,Direction,Analyste,12,Outlook
+E003,Collaborateur 3,Direction,Chargé,4,ERP
+E004,Collaborateur 4,Direction,Analyste,11,Power BI
+E005,Collaborateur 5,Direction,Analyste,10,WhatsApp
+E006,Collaborateur 6,Direction,Analyste,1,Excel
+E007,Collaborateur 7,Direction,Chargé,4,Power BI
+E008,Collaborateur 8,Direction,Assistant,1,Power BI
+E009,Collaborateur 9,Direction,Chargé,12,Power BI
+E010,Collaborateur 10,Direction,Technicien,4,WhatsApp
+E011,Manager Commercial,Commercial,Manager,14,Teams
+E012,Collaborateur 12,Commercial,Analyste,3,WhatsApp
+E013,Collaborateur 13,Commercial,Coordinateur,5,ERP
+E014,Collaborateur 14,Commercial,Chargé,6,Excel
+E015,Collaborateur 15,Commercial,Analyste,7,Excel
+E016,Collaborateur 16,Commercial,Coordinateur,6,Power BI
+E017,Collaborateur 17,Commercial,Coordinateur,1,WhatsApp
+E018,Collaborateur 18,Commercial,Assistant,2,WhatsApp
+E019,Collaborateur 19,Commercial,Analyste,9,Outlook
+E020,Collaborateur 20,Commercial,Assistant,6,Power BI
+E021,Manager ADV,ADV,Manager,8,Excel
+E022,Collaborateur 22,ADV,Analyste,11,ERP
+E023,Collaborateur 23,ADV,Coordinateur,2,ERP
+E024,Collaborateur 24,ADV,Analyste,7,Outlook
+E025,Collaborateur 25,ADV,Technicien,11,Outlook
+E026,Collaborateur 26,ADV,Chargé,6,Outlook
+E027,Collaborateur 27,ADV,Chargé,11,Outlook
+E028,Collaborateur 28,ADV,Analyste,10,ERP
+E029,Collaborateur 29,ADV,Assistant,12,ERP
+E030,Collaborateur 30,ADV,Chargé,8,WhatsApp
+E031,Manager Achats,Achats,Manager,9,Outlook
+E032,Collaborateur 32,Achats,Coordinateur,1,ERP
+E033,Collaborateur 33,Achats,Analyste,6,WhatsApp
+E034,Collaborateur 34,Achats,Coordinateur,2,ERP
+E035,Collaborateur 35,Achats,Assistant,12,Outlook
+E036,Collaborateur 36,Achats,Chargé,11,WhatsApp
+E037,Collaborateur 37,Achats,Technicien,11,WhatsApp
+E038,Collaborateur 38,Achats,Chargé,5,ERP
+E039,Collaborateur 39,Achats,Chargé,12,Power BI
+E040,Collaborateur 40,Achats,Assistant,5,Power BI
+E041,Manager Logistique,Logistique,Manager,11,ERP
+E042,Collaborateur 42,Logistique,Coordinateur,4,ERP
+E043,Collaborateur 43,Logistique,Assistant,8,Excel
+E044,Collaborateur 44,Logistique,Analyste,2,ERP
+E045,Collaborateur 45,Logistique,Chargé,11,WhatsApp
+E046,Collaborateur 46,Logistique,Assistant,2,WhatsApp
+E047,Collaborateur 47,Logistique,Technicien,10,WhatsApp
+E048,Collaborateur 48,Logistique,Assistant,5,Power BI
+E049,Collaborateur 49,Logistique,Analyste,11,Excel
+E050,Collaborateur 50,Logistique,Assistant,5,Outlook
+E051,Manager SAV,SAV,Manager,6,Teams
+E052,Collaborateur 52,SAV,Technicien,3,WhatsApp
+E053,Collaborateur 53,SAV,Analyste,12,Outlook
+E054,Collaborateur 54,SAV,Assistant,3,Power BI
+E055,Collaborateur 55,SAV,Analyste,11,Outlook
+E056,Collaborateur 56,SAV,Assistant,10,ERP
+E057,Collaborateur 57,SAV,Chargé,6,ERP
+E058,Collaborateur 58,SAV,Assistant,9,Excel
+E059,Collaborateur 59,SAV,Assistant,6,WhatsApp
+E060,Collaborateur 60,SAV,Analyste,2,Outlook
+E061,Manager Finance,Finance,Manager,9,Outlook
+E062,Collaborateur 62,Finance,Analyste,4,Power BI
+E063,Collaborateur 63,Finance,Analyste,2,WhatsApp
+E064,Collaborateur 64,Finance,Analyste,9,ERP
+E065,Collaborateur 65,Finance,Chargé,11,WhatsApp
+E066,Collaborateur 66,Finance,Assistant,3,Outlook
+E067,Collaborateur 67,Finance,Assistant,10,WhatsApp
+E068,Collaborateur 68,Finance,Chargé,9,ERP
+E069,Collaborateur 69,Finance,Coordinateur,7,Outlook
+E070,Collaborateur 70,Finance,Technicien,9,WhatsApp
+E071,Manager IT,IT,Manager,6,Outlook
+E072,Collaborateur 72,IT,Chargé,2,Outlook
+E073,Collaborateur 73,IT,Analyste,10,Power BI
+E074,Collaborateur 74,IT,Chargé,10,ERP
+E075,Collaborateur 75,IT,Analyste,2,Excel
+E076,Collaborateur 76,IT,Chargé,2,Excel
+E077,Collaborateur 77,IT,Coordinateur,2,Power BI
+E078,Collaborateur 78,IT,Chargé,5,WhatsApp
+E079,Collaborateur 79,IT,Chargé,9,ERP
+E080,Collaborateur 80,IT,Assistant,10,WhatsApp
+E081,Collaborateur 81,Achats,Opérateur,8,Excel
+E082,Collaborateur 82,Achats,Opérateur,2,ERP
+E083,Collaborateur 83,Finance,Opérateur,6,Excel
+E084,Collaborateur 84,Finance,Opérateur,8,WhatsApp
+E085,Collaborateur 85,Direction,Opérateur,2,ERP
+E086,Collaborateur 86,Finance,Opérateur,6,ERP

@@ -1,0 +1,65 @@
+﻿employee_id,name,department,role,seniority_years,primary_tool
+E001,Manager Direction,Direction,Manager,13,ERP
+E002,Collaborateur 2,Direction,Analyste,12,ERP
+E003,Collaborateur 3,Direction,Analyste,8,Outlook
+E004,Collaborateur 4,Direction,Analyste,2,Excel
+E005,Collaborateur 5,Direction,Analyste,3,Outlook
+E006,Collaborateur 6,Direction,Assistant,2,Power BI
+E007,Collaborateur 7,Direction,Chargé,5,WhatsApp
+E008,Collaborateur 8,Direction,Technicien,8,WhatsApp
+E009,Manager Exploitation,Exploitation,Manager,11,Teams
+E010,Collaborateur 10,Exploitation,Analyste,7,Excel
+E011,Collaborateur 11,Exploitation,Assistant,1,Power BI
+E012,Collaborateur 12,Exploitation,Analyste,12,Power BI
+E013,Collaborateur 13,Exploitation,Analyste,12,Excel
+E014,Collaborateur 14,Exploitation,Coordinateur,9,Excel
+E015,Collaborateur 15,Exploitation,Coordinateur,11,Outlook
+E016,Collaborateur 16,Exploitation,Assistant,2,Outlook
+E017,Manager Planification,Planification,Manager,12,ERP
+E018,Collaborateur 18,Planification,Technicien,11,Excel
+E019,Collaborateur 19,Planification,Technicien,3,Power BI
+E020,Collaborateur 20,Planification,Chargé,3,WhatsApp
+E021,Collaborateur 21,Planification,Assistant,5,ERP
+E022,Collaborateur 22,Planification,Coordinateur,11,Outlook
+E023,Collaborateur 23,Planification,Analyste,9,Power BI
+E024,Collaborateur 24,Planification,Chargé,2,Excel
+E025,Manager Techniciens,Techniciens,Manager,5,ERP
+E026,Collaborateur 26,Techniciens,Assistant,9,Excel
+E027,Collaborateur 27,Techniciens,Coordinateur,4,Outlook
+E028,Collaborateur 28,Techniciens,Chargé,7,Power BI
+E029,Collaborateur 29,Techniciens,Chargé,3,ERP
+E030,Collaborateur 30,Techniciens,Chargé,10,Outlook
+E031,Collaborateur 31,Techniciens,Chargé,2,ERP
+E032,Collaborateur 32,Techniciens,Assistant,1,Power BI
+E033,Manager Achats,Achats,Manager,12,Excel
+E034,Collaborateur 34,Achats,Coordinateur,11,Excel
+E035,Collaborateur 35,Achats,Coordinateur,2,ERP
+E036,Collaborateur 36,Achats,Assistant,8,Outlook
+E037,Collaborateur 37,Achats,Coordinateur,3,ERP
+E038,Collaborateur 38,Achats,Analyste,5,Power BI
+E039,Collaborateur 39,Achats,Analyste,4,Outlook
+E040,Collaborateur 40,Achats,Technicien,8,Outlook
+E041,Manager Relation client,Relation client,Manager,14,Teams
+E042,Collaborateur 42,Relation client,Assistant,3,Power BI
+E043,Collaborateur 43,Relation client,Assistant,6,Outlook
+E044,Collaborateur 44,Relation client,Technicien,3,Excel
+E045,Collaborateur 45,Relation client,Coordinateur,4,ERP
+E046,Collaborateur 46,Relation client,Technicien,5,Outlook
+E047,Collaborateur 47,Relation client,Chargé,11,Outlook
+E048,Collaborateur 48,Relation client,Technicien,8,WhatsApp
+E049,Manager Finance,Finance,Manager,10,Teams
+E050,Collaborateur 50,Finance,Technicien,9,Excel
+E051,Collaborateur 51,Finance,Chargé,11,Power BI
+E052,Collaborateur 52,Finance,Analyste,5,ERP
+E053,Collaborateur 53,Finance,Assistant,4,Outlook
+E054,Collaborateur 54,Finance,Analyste,12,Excel
+E055,Collaborateur 55,Finance,Analyste,9,Excel
+E056,Collaborateur 56,Finance,Assistant,10,WhatsApp
+E057,Manager RH,RH,Manager,14,Outlook
+E058,Collaborateur 58,RH,Analyste,9,Outlook
+E059,Collaborateur 59,RH,Assistant,9,WhatsApp
+E060,Collaborateur 60,RH,Chargé,6,WhatsApp
+E061,Collaborateur 61,RH,Chargé,10,Outlook
+E062,Collaborateur 62,RH,Chargé,8,Power BI
+E063,Collaborateur 63,RH,Assistant,2,WhatsApp
+E064,Collaborateur 64,RH,Coordinateur,9,Excel

@@ -1,0 +1,73 @@
+{
+  "company": "MaghrebPack Industries",
+  "planted_issues": [
+    {
+      "title": "Planification de production instable",
+      "description": "Le planning est ajusté plusieurs fois par jour à partir de fichiers partagés.",
+      "domain": "production",
+      "severity": "high"
+    },
+    {
+      "title": "Pannes répétitives mal capitalisées",
+      "description": "Les comptes rendus de maintenance sont en texte libre et rarement exploités.",
+      "domain": "maintenance",
+      "severity": "high"
+    },
+    {
+      "title": "Non-conformités récurrentes",
+      "description": "Les causes racines sont dispersées entre Excel, PDF qualité et mails.",
+      "domain": "quality",
+      "severity": "high"
+    },
+    {
+      "title": "Prévisions commerciales faibles",
+      "description": "Les ventes communiquent les prévisions au dernier moment.",
+      "domain": "sales",
+      "severity": "medium"
+    },
+    {
+      "title": "Consommation matière mal expliquée",
+      "description": "Les écarts théorique/réel sont analysés manuellement en fin de semaine.",
+      "domain": "supply",
+      "severity": "high"
+    }
+  ],
+  "expected_opportunities": [
+    {
+      "title": "Assistant d’ordonnancement",
+      "annual_value_mad": 620000,
+      "effort": "Élevée",
+      "impact": "Très élevée",
+      "target_delivery": "12-16 sem."
+    },
+    {
+      "title": "Copilote maintenance & diagnostic",
+      "annual_value_mad": 410000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-12 sem."
+    },
+    {
+      "title": "Analyse IA des non-conformités",
+      "annual_value_mad": 350000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-10 sem."
+    },
+    {
+      "title": "Prévision demande & charge",
+      "annual_value_mad": 290000,
+      "effort": "Moyenne",
+      "impact": "Élevée",
+      "target_delivery": "10-14 sem."
+    },
+    {
+      "title": "Détection dérives consommation matière",
+      "annual_value_mad": 440000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-12 sem."
+    }
+  ],
+  "expected_detection_notes": "Le moteur ne doit pas simplement répéter ces éléments. Il doit citer les sources, calculer ou expliquer les métriques, et indiquer son niveau de confiance."
+}

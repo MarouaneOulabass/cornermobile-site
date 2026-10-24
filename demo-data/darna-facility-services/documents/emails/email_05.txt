@@ -1,0 +1,6 @@
+From: collaborateur21@demo.ma
+To: equipe@demo.ma
+Subject: Point stock
+Date: 2026-03-10
+
+Merci de me confirmer si les références sans mouvement depuis 6 mois doivent être provisionnées.

@@ -1,0 +1,6 @@
+From: collaborateur25@demo.ma
+To: equipe@demo.ma
+Subject: Relance facture
+Date: 2026-07-20
+
+Le client demande encore une copie de la facture. Je ne trouve pas le dernier échange dans le dossier partagé.

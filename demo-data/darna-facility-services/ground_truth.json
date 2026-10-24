@@ -1,0 +1,73 @@
+{
+  "company": "Darna Facility Services",
+  "planted_issues": [
+    {
+      "title": "Planification manuelle",
+      "description": "Les interventions sont planifiées dans Excel puis confirmées par WhatsApp.",
+      "domain": "planning",
+      "severity": "high"
+    },
+    {
+      "title": "Comptes rendus terrain non structurés",
+      "description": "Photos et notes vocales arrivent dans plusieurs groupes WhatsApp.",
+      "domain": "operations",
+      "severity": "high"
+    },
+    {
+      "title": "SLA mal suivis",
+      "description": "Les pénalités contractuelles sont découvertes en fin de mois.",
+      "domain": "contracts",
+      "severity": "high"
+    },
+    {
+      "title": "Achats urgents coûteux",
+      "description": "Les pièces sont souvent achetées en urgence sans consolidation des besoins.",
+      "domain": "procurement",
+      "severity": "medium"
+    },
+    {
+      "title": "Facturation retardée",
+      "description": "Les pièces justificatives d’intervention arrivent tardivement à la finance.",
+      "domain": "finance",
+      "severity": "high"
+    }
+  ],
+  "expected_opportunities": [
+    {
+      "title": "Agent de planification des interventions",
+      "annual_value_mad": 360000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-12 sem."
+    },
+    {
+      "title": "Compte rendu terrain assisté par IA",
+      "annual_value_mad": 190000,
+      "effort": "Faible",
+      "impact": "Élevée",
+      "target_delivery": "6-8 sem."
+    },
+    {
+      "title": "Radar SLA & pénalités",
+      "annual_value_mad": 280000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "6-10 sem."
+    },
+    {
+      "title": "Prévision des besoins en pièces",
+      "annual_value_mad": 170000,
+      "effort": "Moyenne",
+      "impact": "Élevée",
+      "target_delivery": "8-12 sem."
+    },
+    {
+      "title": "Dossier d’intervention vers facturation",
+      "annual_value_mad": 220000,
+      "effort": "Faible",
+      "impact": "Très élevée",
+      "target_delivery": "6-8 sem."
+    }
+  ],
+  "expected_detection_notes": "Le moteur ne doit pas simplement répéter ces éléments. Il doit citer les sources, calculer ou expliquer les métriques, et indiquer son niveau de confiance."
+}

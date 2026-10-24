@@ -1,0 +1,6 @@
+From: collaborateur24@demo.ma
+To: equipe@demo.ma
+Subject: URGENT - chiffre à corriger
+Date: 2026-08-25
+
+Le fichier de reporting ne correspond pas à l’ERP. Peux-tu vérifier la colonne montant et me renvoyer une version avant midi ?

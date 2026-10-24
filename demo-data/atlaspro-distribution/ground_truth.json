@@ -1,0 +1,73 @@
+{
+  "company": "AtlasPro Distribution",
+  "planted_issues": [
+    {
+      "title": "Devis manuels",
+      "description": "Les commerciaux utilisent 4 modèles Excel différents et ressaisissent les références depuis le catalogue.",
+      "domain": "commercial",
+      "severity": "high"
+    },
+    {
+      "title": "Relances impayés non priorisées",
+      "description": "Les relances se font par ancienneté uniquement, sans croiser marge, risque ou historique client.",
+      "domain": "finance",
+      "severity": "high"
+    },
+    {
+      "title": "Stock dormant",
+      "description": "De nombreuses références à faible rotation immobilisent du cash depuis plus de 180 jours.",
+      "domain": "inventory",
+      "severity": "high"
+    },
+    {
+      "title": "Reporting mensuel manuel",
+      "description": "La direction reçoit un reporting consolidé après 3 jours de retraitements Excel.",
+      "domain": "reporting",
+      "severity": "medium"
+    },
+    {
+      "title": "SAV dispersé",
+      "description": "Tickets reçus par email/WhatsApp, historique incomplet et délai de réponse variable.",
+      "domain": "support",
+      "severity": "high"
+    }
+  ],
+  "expected_opportunities": [
+    {
+      "title": "Copilote de devis",
+      "annual_value_mad": 210000,
+      "effort": "Faible",
+      "impact": "Très élevée",
+      "target_delivery": "6-8 sem."
+    },
+    {
+      "title": "Priorisation intelligente des relances",
+      "annual_value_mad": 330000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-10 sem."
+    },
+    {
+      "title": "Détection stock dormant & recommandations",
+      "annual_value_mad": 480000,
+      "effort": "Moyenne",
+      "impact": "Très élevée",
+      "target_delivery": "8-12 sem."
+    },
+    {
+      "title": "Reporting direction automatisé",
+      "annual_value_mad": 120000,
+      "effort": "Faible",
+      "impact": "Élevée",
+      "target_delivery": "4-6 sem."
+    },
+    {
+      "title": "Assistant SAV omnicanal",
+      "annual_value_mad": 260000,
+      "effort": "Moyenne",
+      "impact": "Élevée",
+      "target_delivery": "8-10 sem."
+    }
+  ],
+  "expected_detection_notes": "Le moteur ne doit pas simplement répéter ces éléments. Il doit citer les sources, calculer ou expliquer les métriques, et indiquer son niveau de confiance."
+}

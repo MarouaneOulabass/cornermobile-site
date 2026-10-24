@@ -1,0 +1,181 @@
+﻿ticket_id,channel,priority,resolution_hours,status,observed_issue
+TKT-0001,Phone,Low,11,Closed,Missing history
+TKT-0002,Email,High,54,Closed,Duplicate request
+TKT-0003,Portal,High,18,Open,Manual routing
+TKT-0004,Phone,Medium,53,Open,Parts delay
+TKT-0005,Portal,High,89,Closed,Parts delay
+TKT-0006,Email,Low,8,Open,Missing history
+TKT-0007,WhatsApp,High,21,Closed,No SLA alert
+TKT-0008,Portal,High,59,Open,
+TKT-0009,Phone,High,65,Closed,
+TKT-0010,WhatsApp,Medium,21,Closed,Missing history
+TKT-0011,Portal,Low,96,Closed,No SLA alert
+TKT-0012,Email,Low,51,Closed,
+TKT-0013,Email,High,60,Closed,Parts delay
+TKT-0014,Portal,Medium,22,Closed,Parts delay
+TKT-0015,Portal,Low,35,Closed,Missing history
+TKT-0016,Email,Medium,78,Closed,Missing history
+TKT-0017,WhatsApp,Medium,21,Open,Missing history
+TKT-0018,Email,Low,77,Closed,Parts delay
+TKT-0019,WhatsApp,High,26,Open,Missing history
+TKT-0020,WhatsApp,Medium,11,Open,Manual routing
+TKT-0021,Email,High,62,Closed,Missing history
+TKT-0022,Phone,Low,40,Closed,Parts delay
+TKT-0023,Phone,Medium,65,Closed,Parts delay
+TKT-0024,Portal,High,46,Closed,
+TKT-0025,Email,Medium,53,Open,Manual routing
+TKT-0026,Email,High,20,Closed,Manual routing
+TKT-0027,Portal,Medium,76,Closed,Parts delay
+TKT-0028,WhatsApp,Low,88,Closed,Missing history
+TKT-0029,Email,High,30,Closed,
+TKT-0030,WhatsApp,High,21,Open,Manual routing
+TKT-0031,Phone,Medium,17,Closed,Parts delay
+TKT-0032,Phone,High,56,Closed,
+TKT-0033,Portal,Low,27,Open,Manual routing
+TKT-0034,Email,Low,73,Open,No SLA alert
+TKT-0035,Email,Low,19,Closed,Manual routing
+TKT-0036,Email,Medium,13,Closed,Parts delay
+TKT-0037,WhatsApp,Medium,21,Closed,Parts delay
+TKT-0038,Phone,Medium,12,Closed,Duplicate request
+TKT-0039,Portal,Medium,61,Closed,No SLA alert
+TKT-0040,WhatsApp,Low,73,Closed,Missing history
+TKT-0041,Phone,Medium,52,Closed,Manual routing
+TKT-0042,WhatsApp,Medium,47,Open,Manual routing
+TKT-0043,Phone,Medium,11,Open,No SLA alert
+TKT-0044,Portal,Medium,88,Closed,Manual routing
+TKT-0045,Email,High,32,Open,Manual routing
+TKT-0046,Email,Low,14,Closed,No SLA alert
+TKT-0047,WhatsApp,High,52,Closed,Duplicate request
+TKT-0048,Portal,Medium,86,Closed,Parts delay
+TKT-0049,Portal,Medium,83,Open,No SLA alert
+TKT-0050,Email,Low,24,Open,Missing history
+TKT-0051,Portal,Medium,26,Closed,Parts delay
+TKT-0052,Email,Medium,44,Open,No SLA alert
+TKT-0053,WhatsApp,High,95,Closed,Missing history
+TKT-0054,Phone,Medium,5,Open,Duplicate request
+TKT-0055,Portal,Low,82,Closed,Parts delay
+TKT-0056,Email,High,49,Closed,Parts delay
+TKT-0057,Portal,Medium,28,Closed,Duplicate request
+TKT-0058,Email,High,55,Closed,Parts delay
+TKT-0059,WhatsApp,Low,19,Closed,Parts delay
+TKT-0060,Portal,Low,39,Open,No SLA alert
+TKT-0061,Portal,High,28,Open,Parts delay
+TKT-0062,WhatsApp,Low,12,Closed,Parts delay
+TKT-0063,Phone,Low,26,Closed,No SLA alert
+TKT-0064,Portal,Medium,69,Open,Duplicate request
+TKT-0065,Portal,Medium,89,Open,No SLA alert
+TKT-0066,Email,High,77,Closed,Missing history
+TKT-0067,WhatsApp,Medium,86,Open,
+TKT-0068,Phone,Low,20,Closed,Duplicate request
+TKT-0069,Portal,Medium,15,Open,No SLA alert
+TKT-0070,Phone,High,93,Closed,No SLA alert
+TKT-0071,WhatsApp,High,58,Open,Manual routing
+TKT-0072,Email,Low,28,Open,Duplicate request
+TKT-0073,Portal,High,70,Closed,Manual routing
+TKT-0074,Portal,Low,45,Closed,Duplicate request
+TKT-0075,Email,Medium,47,Closed,Parts delay
+TKT-0076,Phone,High,16,Open,No SLA alert
+TKT-0077,Portal,Medium,53,Closed,Parts delay
+TKT-0078,Portal,High,43,Closed,Duplicate request
+TKT-0079,Portal,Medium,48,Closed,Manual routing
+TKT-0080,WhatsApp,High,56,Closed,Parts delay
+TKT-0081,Portal,High,37,Open,Manual routing
+TKT-0082,Email,Low,14,Closed,
+TKT-0083,Email,High,53,Closed,No SLA alert
+TKT-0084,Email,High,57,Open,Manual routing
+TKT-0085,Email,High,38,Closed,Duplicate request
+TKT-0086,WhatsApp,Medium,71,Closed,Missing history
+TKT-0087,WhatsApp,Medium,16,Closed,No SLA alert
+TKT-0088,Portal,High,91,Open,No SLA alert
+TKT-0089,Email,Medium,29,Open,Parts delay
+TKT-0090,Phone,High,34,Closed,No SLA alert
+TKT-0091,WhatsApp,Low,54,Closed,Missing history
+TKT-0092,Email,Low,48,Open,
+TKT-0093,Phone,Medium,22,Open,No SLA alert
+TKT-0094,WhatsApp,High,51,Closed,Manual routing
+TKT-0095,Portal,Low,74,Closed,Duplicate request
+TKT-0096,Portal,High,23,Closed,Parts delay
+TKT-0097,WhatsApp,Medium,30,Closed,
+TKT-0098,WhatsApp,High,16,Open,Manual routing
+TKT-0099,Portal,High,34,Open,Duplicate request
+TKT-0100,Phone,Low,12,Closed,Missing history
+TKT-0101,Portal,Low,81,Open,Duplicate request
+TKT-0102,Email,High,91,Open,Missing history
+TKT-0103,Portal,Low,96,Open,Duplicate request
+TKT-0104,Portal,High,81,Closed,Duplicate request
+TKT-0105,WhatsApp,High,29,Closed,Duplicate request
+TKT-0106,WhatsApp,High,49,Closed,
+TKT-0107,Email,Medium,11,Closed,
+TKT-0108,Email,High,75,Closed,Missing history
+TKT-0109,Portal,High,16,Closed,Duplicate request
+TKT-0110,Phone,Medium,24,Closed,Missing history
+TKT-0111,Portal,Medium,27,Closed,Missing history
+TKT-0112,Portal,Low,53,Closed,No SLA alert
+TKT-0113,Email,Low,88,Closed,No SLA alert
+TKT-0114,Phone,High,58,Closed,Duplicate request
+TKT-0115,Phone,Low,23,Open,Manual routing
+TKT-0116,Email,Low,44,Closed,No SLA alert
+TKT-0117,Email,Low,67,Open,Parts delay
+TKT-0118,Email,Low,78,Closed,Manual routing
+TKT-0119,Email,High,66,Closed,Duplicate request
+TKT-0120,Phone,Low,28,Closed,Parts delay
+TKT-0121,WhatsApp,Low,11,Open,
+TKT-0122,WhatsApp,Medium,36,Closed,Duplicate request
+TKT-0123,Email,Medium,91,Open,
+TKT-0124,Phone,Medium,96,Closed,No SLA alert
+TKT-0125,Portal,Low,33,Closed,Duplicate request
+TKT-0126,Phone,Medium,14,Open,Manual routing
+TKT-0127,Phone,Low,27,Open,No SLA alert
+TKT-0128,Portal,Medium,55,Open,
+TKT-0129,Phone,Medium,80,Closed,Manual routing
+TKT-0130,Portal,Medium,26,Open,Parts delay
+TKT-0131,Phone,High,9,Closed,Duplicate request
+TKT-0132,Email,High,33,Open,No SLA alert
+TKT-0133,Phone,High,83,Open,Parts delay
+TKT-0134,Portal,Low,15,Closed,Parts delay
+TKT-0135,Portal,Low,46,Closed,Missing history
+TKT-0136,WhatsApp,High,48,Closed,Duplicate request
+TKT-0137,Phone,Low,2,Closed,
+TKT-0138,Email,High,43,Closed,No SLA alert
+TKT-0139,Phone,Low,72,Closed,No SLA alert
+TKT-0140,Phone,High,28,Open,Duplicate request
+TKT-0141,Email,High,36,Open,Manual routing
+TKT-0142,Email,High,83,Closed,
+TKT-0143,Portal,Medium,41,Closed,Duplicate request
+TKT-0144,Email,Medium,64,Closed,Parts delay
+TKT-0145,Portal,Low,16,Closed,Duplicate request
+TKT-0146,Phone,High,50,Closed,Manual routing
+TKT-0147,Email,Medium,3,Open,Manual routing
+TKT-0148,Email,Medium,37,Closed,No SLA alert
+TKT-0149,Email,High,68,Closed,Parts delay
+TKT-0150,Email,Low,61,Closed,No SLA alert
+TKT-0151,Phone,Medium,41,Closed,No SLA alert
+TKT-0152,Email,High,41,Closed,Manual routing
+TKT-0153,Email,Medium,39,Open,No SLA alert
+TKT-0154,Portal,High,16,Closed,Manual routing
+TKT-0155,Email,Low,29,Closed,Missing history
+TKT-0156,WhatsApp,Low,42,Open,
+TKT-0157,Portal,Low,22,Closed,Duplicate request
+TKT-0158,Phone,High,1,Open,Missing history
+TKT-0159,Phone,Low,15,Closed,Parts delay
+TKT-0160,Email,Medium,43,Open,Manual routing
+TKT-0161,Portal,Medium,90,Closed,Duplicate request
+TKT-0162,Portal,Low,17,Closed,Duplicate request
+TKT-0163,Portal,High,58,Open,Missing history
+TKT-0164,WhatsApp,High,62,Open,No SLA alert
+TKT-0165,Phone,Medium,94,Closed,Duplicate request
+TKT-0166,Email,Medium,38,Open,Missing history
+TKT-0167,Phone,High,32,Open,
+TKT-0168,WhatsApp,High,10,Closed,No SLA alert
+TKT-0169,Email,Low,2,Open,Duplicate request
+TKT-0170,Portal,Medium,25,Closed,Missing history
+TKT-0171,Phone,Low,76,Open,Manual routing
+TKT-0172,Phone,Medium,91,Closed,
+TKT-0173,WhatsApp,High,14,Closed,Duplicate request
+TKT-0174,Phone,Medium,58,Open,Manual routing
+TKT-0175,WhatsApp,Medium,25,Closed,Parts delay
+TKT-0176,Portal,Low,88,Closed,Manual routing
+TKT-0177,Email,Low,60,Closed,
+TKT-0178,Email,Low,3,Closed,Duplicate request
+TKT-0179,Phone,Low,61,Open,Manual routing
+TKT-0180,Portal,Medium,34,Closed,Manual routing
