@@ -18,7 +18,7 @@ from app.domain.enums import OpportunityCategory as C
 from app.engine.benchmarks import bench
 from app.engine.context import Dataset, median
 from app.engine.detectors import Env, Finding, period_months
-from app.engine.fmt import n0, n1
+from app.engine.fmt import mad, n0, n1
 from app.engine.roi import ValueLine
 
 F, CALC, H = AssumptionNature.fait, AssumptionNature.calcul, AssumptionNature.hypothese
@@ -53,6 +53,7 @@ class AssumptionSpec:
     confidence: float = 0.5
     min_value: float | None = None
     max_value: float | None = None
+    evidence: list = field(default_factory=list)  # sources of a data-derived value that has no metric
 
 
 @dataclass
@@ -233,9 +234,69 @@ def _metric(f: Finding, key: str) -> float | None:
     return next((m.value for m in f.metrics if m.key == key), None)
 
 
+def _metric_ev(env: Env, key: str, code: str | None = None) -> list:
+    """Evidence behind a metric a detector computed (any finding when no code is given)."""
+    for f in env.findings.values():
+        if code is None or f.code == code:
+            for m in f.metrics:
+                if m.key == key and m.evidence:
+                    return list(m.evidence)
+    return []
+
+
+def _aggregate_ev(env: Env, ds: Dataset, summary: str, formula: str, value: dict, columns: list[str]) -> list:
+    return [env.ctx.cite_aggregate(ds, summary, formula, value, columns, "opportunity:assumption")]
+
+
+def _revenue(env: Env, revenue: float) -> AssumptionSpec:
+    """Annual revenue: a fact when a source states it, otherwise the figure entered at scoping, to confirm."""
+    hits = sorted(
+        env.ctx.grep(r"chiffre d.affaires annuel|\bCA annuel\b"),
+        key=lambda h: "profil" not in h[0].document.filename.lower(),
+    )
+    if hits:
+        t, lines = hits[0]
+        ev = [
+            env.ctx.cite_lines(
+                t, lines[:1], "Chiffre d'affaires indiqué dans le profil", "opportunity:assumption"
+            )
+        ]
+        return AssumptionSpec(
+            "revenue",
+            "Chiffre d'affaires annuel",
+            revenue,
+            "MAD/an",
+            F,
+            f"Indiqué dans {t.document.filename}.",
+            "actuel",
+            confidence=0.95,
+            evidence=ev,
+        )
+    return AssumptionSpec(
+        "revenue",
+        "Chiffre d'affaires annuel",
+        revenue,
+        "MAD/an",
+        H,
+        "Saisi au cadrage de la mission, aucune source ne le mentionne (à confirmer).",
+        "actuel",
+        confidence=0.6,
+    )
+
+
 def _volume(env: Env, ds: Dataset, unit: str, label: str, count: int | None = None) -> list[AssumptionSpec]:
     months, nature, rationale = extract_period(env, ds)
     n = ds.n if count is None else count
+    period_ev = (
+        _aggregate_ev(env, ds, rationale, f"min–max({ds.column('date')})", {"months": months}, ["date"])
+        if nature == CALC
+        else []
+    )
+    records_ev = (
+        _aggregate_ev(env, ds, f"{n} {unit} dans {ds.document.filename}", f"count(*) = {n}", {"count": n}, [])
+        if count is None
+        else []
+    )
     return [
         AssumptionSpec(
             "period_months",
@@ -248,6 +309,7 @@ def _volume(env: Env, ds: Dataset, unit: str, label: str, count: int | None = No
             confidence=0.9 if nature == CALC else 0.4,
             min_value=0.5,
             max_value=36,
+            evidence=period_ev,
         ),
         AssumptionSpec(
             "records",
@@ -258,6 +320,7 @@ def _volume(env: Env, ds: Dataset, unit: str, label: str, count: int | None = No
             f"Décompte dans {ds.document.filename}.",
             "actuel",
             confidence=0.95,
+            evidence=records_ev,
         ),
     ]
 
@@ -505,6 +568,16 @@ def quote_followup(env: Env, f: Finding) -> OpportunitySpec:
             else "Hypothèse de marge brute de 20 %.",
             "actuel",
             confidence=0.8 if margin else 0.4,
+            evidence=_aggregate_ev(
+                env,
+                rec,
+                "Marge brute médiane des factures clients",
+                f"median({rec.column('margin_pct')})",
+                {"median": margin},
+                ["margin_pct"],
+            )
+            if margin
+            else [],
         ),
         _hourly(env),
         *_costs(category, EffortLevel.faible),
@@ -577,6 +650,7 @@ def receivables_priority(env: Env, f: Finding) -> OpportunitySpec:
             f"{s['overdue_count']} factures échues sur {n1(months)} mois de données.",
             "actuel",
             confidence=0.85,
+            evidence=_metric_ev(env, "overdue_share", f.code),
         ),
         AssumptionSpec(
             "cost_of_capital",
@@ -783,6 +857,7 @@ def reporting_automation(env: Env, f: Finding) -> OpportunitySpec:
             F,
             "Rapport mensuel (documents analysés).",
             "actuel",
+            evidence=[e for e in f.evidence if e.kind in ("excerpt", "document")][:3],
         ),
         AssumptionSpec(
             "people",
@@ -804,7 +879,9 @@ def reporting_automation(env: Env, f: Finding) -> OpportunitySpec:
             "actuel",
             min_value=0,
         ),
-        AssumptionSpec("hours_per_day", "Heures par jour", 8, "h", F, "Journée standard.", "actuel"),
+        AssumptionSpec(
+            "hours_per_day", "Heures par jour", 8, "h", H, "Convention : journée de travail de 8 h.", "actuel"
+        ),
         AssumptionSpec(
             "automation",
             "Part des retraitements automatisée",
@@ -872,6 +949,7 @@ def support_assistant(env: Env, f: Finding) -> OpportunitySpec:
             F,
             "Décompte des anomalies observées dans les tickets.",
             "actuel",
+            metric_key="problem_tickets",
             confidence=0.9,
         ),
         AssumptionSpec(
@@ -1024,6 +1102,13 @@ def sla_radar(env: Env, f: Finding) -> OpportunitySpec:
             f"Somme des montants annuels de {len(env.ex.contracts)} contrats.",
             "actuel",
             confidence=0.95,
+            evidence=[
+                env.ctx.cite_lines(
+                    c.doc, [c.amount_line], f"{c.label} : {mad(c.annual_amount)}/an", "opportunity:assumption"
+                )
+                for c in env.ex.contracts
+                if c.annual_amount and c.amount_line
+            ],
         ),
         AssumptionSpec(
             "churn_reduction",
@@ -1141,6 +1226,7 @@ def planning_optimiser(env: Env, f: Finding) -> OpportunitySpec:
             "Σ montant annuel × pénalité des contrats.",
             "actuel",
             confidence=0.8,
+            evidence=_metric_ev(env, "penalty_exposure"),
         ),
         AssumptionSpec(
             "breach_rate",
@@ -1152,6 +1238,7 @@ def planning_optimiser(env: Env, f: Finding) -> OpportunitySpec:
             "actuel",
             min_value=0,
             max_value=1,
+            evidence=_metric_ev(env, "breach_rate") if sla_finding_breach else [],
         ),
         AssumptionSpec(
             "sla_gain",
@@ -1353,19 +1440,12 @@ def field_reports(env: Env, f: Finding) -> OpportunitySpec:
 
 def invoicing_flow(env: Env, f: Finding) -> OpportunitySpec:
     s = f.signals
+    invoices = env.ctx.dataset("receivables")
+    invoice_period = period_months(invoices) if invoices is not None else None
     category, rationale = choose_category(C.integration_si)
     revenue = s.get("revenue") or 0
     assumptions = [
-        AssumptionSpec(
-            "revenue",
-            "Chiffre d'affaires annuel",
-            revenue,
-            "MAD/an",
-            F,
-            "Profil de l'entreprise.",
-            "actuel",
-            confidence=0.95,
-        ),
+        _revenue(env, revenue),
         AssumptionSpec(
             "days_gained",
             "Jours de facturation gagnés",
@@ -1389,11 +1469,23 @@ def invoicing_flow(env: Env, f: Finding) -> OpportunitySpec:
         AssumptionSpec(
             "invoices_per_month",
             "Factures par mois",
-            s.get("invoices_per_month") or 20,
+            s["invoices_per_month"] if invoice_period else (s.get("invoices_per_month") or 20),
             "factures/mois",
-            CALC,
-            "Calcul sur les factures clients.",
+            CALC if invoice_period else H,
+            f"{invoices.n} factures sur {n1(invoice_period)} mois de données."
+            if invoice_period
+            else "Période des factures inconnue : volume mensuel estimé (à confirmer).",
             "actuel",
+            evidence=_aggregate_ev(
+                env,
+                invoices,
+                f"{invoices.n} factures sur {n1(invoice_period)} mois",
+                f"count(*) / période = {invoices.n} / {n1(invoice_period)}",
+                {"count": invoices.n, "months": invoice_period},
+                ["date"],
+            )
+            if invoice_period
+            else [],
         ),
         AssumptionSpec(
             "invoice_minutes",
@@ -1669,6 +1761,7 @@ def quality_analysis(env: Env, f: Finding) -> OpportunitySpec:
             "Décompte des récurrences sous 90 jours.",
             "actuel",
             confidence=0.9,
+            evidence=_metric_ev(env, "repeat_share", f.code),
         ),
         AssumptionSpec(
             "cost_per_nc",
@@ -1779,6 +1872,7 @@ def scheduling_assistant(env: Env, f: Finding) -> OpportunitySpec:
             "actuel",
             metric_key="excess_hours",
             confidence=0.9,
+            evidence=_metric_ev(env, "excess_hours"),
         ),
         AssumptionSpec(
             "excess_reduction",
@@ -1808,6 +1902,16 @@ def scheduling_assistant(env: Env, f: Finding) -> OpportunitySpec:
             F,
             "Somme de la colonne replans.",
             "actuel",
+            evidence=_aggregate_ev(
+                env,
+                ds,
+                f"{n0(replans)} replanifications au total",
+                f"sum({ds.column('replans')})",
+                {"sum": replans},
+                ["replans"],
+            )
+            if ds.has("replans")
+            else [],
         ),
         AssumptionSpec(
             "replan_minutes",
@@ -1885,16 +1989,7 @@ def material_drift(env: Env, f: Finding) -> OpportunitySpec:
     category, rationale = choose_category(C.bi_data)
     revenue = env.ctx.mission.organization.revenue_mad or 0
     assumptions = [
-        AssumptionSpec(
-            "revenue",
-            "Chiffre d'affaires annuel",
-            revenue,
-            "MAD/an",
-            F,
-            "Profil de l'entreprise.",
-            "actuel",
-            confidence=0.95,
-        ),
+        _revenue(env, revenue),
         AssumptionSpec(
             "material_share",
             "Part de la matière dans le chiffre d'affaires",
@@ -1985,6 +2080,15 @@ def demand_forecast(env: Env, f: Finding) -> OpportunitySpec:
             "Σ réel − Σ prévu.",
             "actuel",
             confidence=0.9,
+            evidence=_metric_ev(env, "excess_hours")
+            or _aggregate_ev(
+                env,
+                ds,
+                f"{n0(excess)} h au-delà du prévu",
+                "Σ réel − Σ prévu",
+                {"excess_hours": round(excess, 1)},
+                ["planned_hours", "actual_hours"],
+            ),
         ),
         AssumptionSpec(
             "forecast_share",
@@ -2055,16 +2159,32 @@ def demand_forecast(env: Env, f: Finding) -> OpportunitySpec:
 def procedures_refresh(env: Env, f: Finding) -> OpportunitySpec:
     category, rationale = choose_category(C.amelioration_processus)
     headcount = sum(d.headcount for d in env.ex.org.departments.values()) or 50
+    staff = env.ctx.dataset("employees")
+    staff_ev = (
+        _aggregate_ev(
+            env,
+            staff,
+            f"{staff.n} collaborateurs dans {staff.document.filename}",
+            f"count(*) = {staff.n}",
+            {"count": staff.n},
+            [],
+        )
+        if staff is not None and staff.n == headcount
+        else []
+    )
     assumptions = [
         AssumptionSpec(
             "employees",
             "Collaborateurs concernés",
             headcount,
             "personnes",
-            F,
-            "Effectif analysé.",
+            F if staff_ev else H,
+            "Effectif analysé."
+            if staff_ev
+            else "Effectif estimé (aucune liste du personnel dans les sources).",
             "actuel",
-            confidence=0.95,
+            confidence=0.95 if staff_ev else 0.5,
+            evidence=staff_ev,
         ),
         AssumptionSpec(
             "search_hours",
@@ -2155,6 +2275,7 @@ def used_keys(spec: OpportunitySpec) -> set[str]:
 
 def generate(env: Env, findings: list[Finding]) -> list[OpportunitySpec]:
     specs: dict[str, OpportunitySpec] = {}
+    env.findings = {f.code: f for f in findings}
     for f in findings:
         template = next((fn for prefix, fn in TEMPLATES if f.code.startswith(prefix)), None)
         if template is None:

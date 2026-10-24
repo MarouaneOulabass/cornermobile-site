@@ -86,14 +86,15 @@ def persist_opportunities(
             row.metric_id = metric.id if metric else None
             keep.add(a.key)
             db.flush()
+            evs = list(a.evidence)
             if metric is not None:
-                evs = db.scalars(
+                evs += db.scalars(
                     select(Evidence)
                     .join(EvidenceLink, EvidenceLink.evidence_id == Evidence.id)
                     .where(EvidenceLink.target_type == TargetType.metric, EvidenceLink.target_id == metric.id)
                 ).all()
-                if evs:
-                    ctx.link(evs, TargetType.assumption, row.id)
+            if evs:
+                ctx.link(list(dict.fromkeys(evs)), TargetType.assumption, row.id)
         for key, row in current.items():
             if key not in keep and not row.edited_fields:
                 opp.assumptions.remove(row)

@@ -89,6 +89,7 @@ class Env:
     ex: Extraction
     params: dict
     ref_date: date
+    findings: dict[str, Finding] = field(default_factory=dict)  # set when business cases are generated
 
     def process_for(self, ds: Dataset | None = None, name: str | None = None) -> ProcessInfo | None:
         for p in self.ex.processes:
@@ -543,6 +544,7 @@ def detect_receivables(env: Env) -> list[Finding]:
                 "creances_echues": {"value": round(overdue_amount), "nature": "fait"},
                 "cout_du_capital": {"value": coc, "nature": "hypothese"},
             },
+            evidence=[ev_overdue],
         )
     )
     revenue = env.ctx.mission.organization.revenue_mad or total_amount
@@ -675,6 +677,30 @@ def detect_dormant_stock(env: Env) -> list[Finding]:
                         "stock_dormant": {"value": round(dormant_value), "nature": "fait"},
                         "taux_detention": {"value": holding, "nature": "hypothese"},
                     },
+                    evidence=[ev],
+                ),
+                *(
+                    [
+                        MetricSpec(
+                            "very_old_count",
+                            f"Références sans vente depuis plus de {n0(2 * threshold)} jours",
+                            len(very_old),
+                            "",
+                            f"count(jours sans vente ≥ {n0(2 * threshold)})",
+                            nature="fait",
+                            evidence=[
+                                c.cite_rows(
+                                    ds,
+                                    very_old,
+                                    ["item", "days_since_movement"],
+                                    f"{len(very_old)} références sans vente depuis {n0(2 * threshold)} jours ou plus",
+                                    code,
+                                )
+                            ],
+                        )
+                    ]
+                    if very_old
+                    else []
                 ),
             ],
             risk=RiskSpec(
@@ -731,6 +757,7 @@ def detect_support_dispersion(env: Env) -> list[Finding]:
     )
     if len(channels) < 3 and not missing:
         return []
+    problem_rows = sorted(set(missing + duplicate + routing))
     c = env.ctx
     informal = [n for name in ("WhatsApp", "Téléphone") for n in by_channel.get(name, [])]
     evidence = []
@@ -766,7 +793,11 @@ def detect_support_dispersion(env: Env) -> list[Finding]:
     )
     evidence.append(ev_time)
     text_ev, hits = corroborate(
-        env, r"whatsapp|ne trouve pas le dernier [ée]change", "Échange sur un canal informel", code, limit=2
+        env,
+        r"whatsapp|ne trouve pas le dernier [ée]change",
+        "Échange support sur un canal informel (ticket hors outil)",
+        code,
+        limit=2,
     )
     open_share = None
     if ds.has("status"):
@@ -819,6 +850,29 @@ def detect_support_dispersion(env: Env) -> list[Finding]:
                     "ratio",
                     f"{len(missing)} / {ds.n}",
                     evidence=evidence[1:2] if missing else [],
+                ),
+                *(
+                    [
+                        MetricSpec(
+                            "problem_tickets",
+                            "Tickets avec historique manquant, doublon ou routage manuel",
+                            len(problem_rows),
+                            "",
+                            "count(historique manquant ∪ doublon ∪ routage manuel)",
+                            nature="fait",
+                            evidence=[
+                                c.cite_rows(
+                                    ds,
+                                    problem_rows,
+                                    ["issue"],
+                                    f"{len(problem_rows)} tickets à reprendre (historique, doublon, routage)",
+                                    code,
+                                )
+                            ],
+                        )
+                    ]
+                    if problem_rows
+                    else []
                 ),
                 MetricSpec(
                     "resolution_median_h",
@@ -1461,17 +1515,16 @@ def detect_quality(env: Env) -> list[Finding]:
                 ds, unknown, ["root_cause"], f"{len(unknown)} non-conformités sans cause racine", code
             )
         )
+    sources_ev = c.cite_aggregate(
+        ds,
+        f"Causes documentées dans {len(sources)} supports",
+        " ; ".join(f"{k} : {v}" for k, v in sources.most_common()),
+        dict(sources),
+        ["source_system"],
+        code,
+    )
     if len(sources) >= 2:
-        evidence.append(
-            c.cite_aggregate(
-                ds,
-                f"Causes documentées dans {len(sources)} supports",
-                " ; ".join(f"{k} : {v}" for k, v in sources.most_common()),
-                dict(sources),
-                ["source_system"],
-                code,
-            )
-        )
+        evidence.append(sources_ev)
     dept, proc = _owner(env, ds)
     return [
         Finding(
@@ -1516,6 +1569,7 @@ def detect_quality(env: Env) -> list[Finding]:
                     "count(distinct source)",
                     nature="fait",
                     inputs=dict(sources),
+                    evidence=[sources_ev],
                 ),
             ],
             signals={
@@ -1833,10 +1887,11 @@ def detect_field_reports(env: Env) -> list[Finding]:
     ]
     if len(hits) < 2:
         return []
-    evidence = [
+    email_ev = [
         c.cite_lines(t, ln, "Compte rendu d'intervention manquant ou reçu par WhatsApp", code)
-        for t, ln in hits[:3]
+        for t, ln in hits
     ]
+    evidence = email_ev[:3]
     ds = next((d for d in c.datasets if d.has("planning_source")), None)
     wa = []
     if ds:
@@ -1879,6 +1934,7 @@ def detect_field_reports(env: Env) -> list[Finding]:
                     "",
                     "count(emails)",
                     nature="fait",
+                    evidence=email_ev,
                 )
             ],
             signals={"emails": len(hits), "whatsapp_interventions": len(wa), "volume": ds.n if ds else None},
@@ -1995,21 +2051,26 @@ def detect_procedures(env: Env) -> list[Finding]:
     ]
     if len(no_owner) < 2 and len(stale) < 2:
         return []
-    evidence = []
-    for p in no_owner[:2]:
-        line = next(ln for v, ln in p.vigilance if re.search(r"propri", v, re.I))
-        evidence.append(
-            c.cite_lines(p.document, [line], f"« {p.name} » : propriétaire non précisé", code, relevance=0.6)
+    owner_ev = [
+        c.cite_lines(
+            p.document,
+            [next(ln for v, ln in p.vigilance if re.search(r"propri", v, re.I))],
+            f"« {p.name} » : propriétaire non précisé",
+            code,
+            relevance=0.6,
         )
-    for p in stale[:3]:
-        evidence.append(
-            c.cite_document(
-                p.document.document,
-                f"« {p.name} » mise à jour le {p.updated.isoformat()}",
-                code,
-                {"updated": p.updated.isoformat()},
-            )
+        for p in no_owner
+    ]
+    stale_ev = [
+        c.cite_document(
+            p.document.document,
+            f"« {p.name} » mise à jour le {p.updated.isoformat()}",
+            code,
+            {"updated": p.updated.isoformat()},
         )
+        for p in stale
+    ]
+    evidence = owner_ev[:2] + stale_ev[:3]
     for p in manual_controls[:1]:
         line = next(ln for v, ln in p.vigilance if re.search(r"manuel", v, re.I))
         evidence.append(
@@ -2042,6 +2103,7 @@ def detect_procedures(env: Env) -> list[Finding]:
                     "",
                     "count",
                     nature="fait",
+                    evidence=owner_ev,
                 ),
                 MetricSpec(
                     "stale",
@@ -2050,6 +2112,7 @@ def detect_procedures(env: Env) -> list[Finding]:
                     "",
                     f"count(mise à jour < {env.ref_date.isoformat()} − {n0(max_age)} mois)",
                     inputs={"anciennete_max_mois": {"value": max_age, "nature": "hypothese"}},
+                    evidence=stale_ev,
                 ),
             ],
             signals={"procedures": len(procs), "no_owner": len(no_owner), "stale": len(stale)},
