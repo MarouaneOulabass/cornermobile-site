@@ -102,3 +102,33 @@ export const NATURE_LABELS: Record<string, [string, Tone, string]> = {
   calcul: ["Calcul", "value", "Calcul déterministe sur des faits"],
   hypothese: ["Hypothèse", "check", "Benchmark ou estimation à valider"],
 };
+
+export const CATEGORY_OPP_LABELS: Record<string, string> = {
+  automatisation: "Automatisation",
+  integration_si: "Intégration SI",
+  amelioration_processus: "Amélioration de processus",
+  bi_data: "BI / data",
+  assistant_ia: "Assistant IA",
+  agent_ia: "Agent IA",
+  rag: "Recherche documentaire (RAG)",
+  prediction_optimisation: "Prédiction / optimisation",
+  nouveau_service: "Nouveau service",
+};
+
+export const AI_CATEGORY_KEYS = new Set(["assistant_ia", "agent_ia", "rag", "prediction_optimisation"]);
+
+export const PRIORITY_TONES: Record<string, Tone> = { P1: "value", P2: "info", P3: "neutral" };
+
+export const SCORE_LABELS: Record<string, string> = {
+  business_impact: "Impact business",
+  time_saved: "Temps gagné",
+  revenue_upside: "Potentiel de revenu",
+  cost_reduction: "Réduction de coûts",
+  risk_reduction: "Réduction des risques",
+  feasibility: "Faisabilité",
+  data_readiness: "Maturité des données",
+  change_effort: "Effort de changement",
+  technical_complexity: "Complexité technique",
+  compliance_risk: "Risque de conformité",
+  confidence: "Confiance",
+};

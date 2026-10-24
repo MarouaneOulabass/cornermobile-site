@@ -220,3 +220,92 @@ class PainPointOut(ORM):
     metrics: list[MetricOut] = Field(default_factory=list)
     risk: RiskOut | None = None
     opportunity_ids: list[uuid.UUID] = Field(default_factory=list)
+
+
+class AssumptionOut(ORM):
+    id: uuid.UUID
+    key: str
+    label: str
+    value: float
+    default_value: float
+    unit: str
+    nature: str
+    source: str
+    group: str
+    confidence: float
+    min_value: float | None
+    max_value: float | None
+    metric_id: uuid.UUID | None
+    validation_status: str
+    edited_fields: list
+    validated_at: datetime | None
+    evidence_count: int = 0
+
+
+class PainPointRef(ORM):
+    id: uuid.UUID
+    title: str
+    criticality: str
+    confidence: float
+    is_hypothesis: bool
+    validation_status: str
+
+
+class OpportunityOut(ORM):
+    id: uuid.UUID
+    code: str
+    title: str
+    summary: str
+    category: str
+    category_rationale: str
+    department: str | None
+    effort: str
+    target_delivery: str | None
+    scores: dict
+    priority_score: float
+    priority_rank: int | None
+    priority_label: str | None
+    confidence: float
+    validation_status: str
+    validated_at: datetime | None
+    edited_fields: list
+    generated: dict
+    roi: dict = Field(default_factory=dict)
+    pain_points: list[PainPointRef] = Field(default_factory=list)
+    evidence_count: int = 0
+
+
+class OpportunityDetail(OpportunityOut):
+    architecture: list
+    pilot_plan: list
+    kpis: list
+    assumptions: list[AssumptionOut] = Field(default_factory=list)
+    lines: list = Field(default_factory=list)
+    weights: dict = Field(default_factory=dict)
+    penalties: dict = Field(default_factory=dict)
+
+
+class SimulateIn(BaseModel):
+    overrides: dict[str, float] = Field(default_factory=dict)
+
+
+class SimulateOut(BaseModel):
+    results: dict
+    lines: list
+    scores: dict
+    priority_score: float
+
+
+class ScoringModelIO(BaseModel):
+    weights: dict[str, float]
+    penalties: dict[str, float]
+
+
+class OverviewOut(BaseModel):
+    maturity: list = Field(default_factory=list)
+    completeness: dict = Field(default_factory=dict)
+    top_opportunities: list[OpportunityOut] = Field(default_factory=list)
+    quick_wins: list[OpportunityOut] = Field(default_factory=list)
+    risks: list[RiskOut] = Field(default_factory=list)
+    value_by_category: dict = Field(default_factory=dict)
+    hypotheses: int = 0

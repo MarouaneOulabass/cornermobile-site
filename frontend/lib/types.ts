@@ -65,6 +65,7 @@ export interface MissionStats {
   opportunities_priority: number;
   validated_share: number;
   annual_value_mad: number;
+  analysis_confidence: number | null;
   alerts: string[];
   progress: number;
 }
@@ -355,4 +356,113 @@ export interface PainPoint {
   metrics: Metric[];
   risk: Risk | null;
   opportunity_ids: string[];
+}
+
+export interface RoiResults {
+  hours_saved_month: number;
+  gross_annual_value: number;
+  annual_solution_cost: number;
+  project_cost: number;
+  net_annual_gain: number;
+  payback_months: number | null;
+  roi_12m: number | null;
+  roi_36m: number | null;
+  by_family?: Record<string, number>;
+}
+
+export interface PainPointRef {
+  id: string;
+  title: string;
+  criticality: string;
+  confidence: number;
+  is_hypothesis: boolean;
+  validation_status: ValidationStatus;
+}
+
+export interface Opportunity {
+  id: string;
+  code: string;
+  title: string;
+  summary: string;
+  category: string;
+  category_rationale: string;
+  department: string | null;
+  effort: string;
+  target_delivery: string | null;
+  scores: Record<string, number>;
+  priority_score: number;
+  priority_rank: number | null;
+  priority_label: string | null;
+  confidence: number;
+  validation_status: ValidationStatus;
+  validated_at: string | null;
+  edited_fields: string[];
+  generated: Record<string, unknown>;
+  roi: RoiResults;
+  pain_points: PainPointRef[];
+  evidence_count: number;
+}
+
+export interface Assumption {
+  id: string;
+  key: string;
+  label: string;
+  value: number;
+  default_value: number;
+  unit: string;
+  nature: "fait" | "calcul" | "hypothese";
+  source: string;
+  group: "actuel" | "cible" | "couts";
+  confidence: number;
+  min_value: number | null;
+  max_value: number | null;
+  metric_id: string | null;
+  validation_status: ValidationStatus;
+  edited_fields: string[];
+  validated_at: string | null;
+  evidence_count: number;
+}
+
+export interface RoiLine {
+  key: string;
+  label: string;
+  kind: string;
+  family: string;
+  hours_month: number;
+  annual_value: number;
+}
+
+export interface OpportunityDetail extends Opportunity {
+  architecture: string[];
+  pilot_plan: { step: string; weeks: number }[];
+  kpis: string[];
+  assumptions: Assumption[];
+  lines: RoiLine[];
+  weights: Record<string, number>;
+  penalties: Record<string, number>;
+}
+
+export interface SimulateResult {
+  results: RoiResults;
+  lines: RoiLine[];
+  scores: Record<string, number>;
+  priority_score: number;
+}
+
+export interface MaturityScore {
+  key: string;
+  label: string;
+  value: number;
+  inputs: { label: string; value: number }[];
+  explanation: string;
+}
+
+export interface Overview {
+  maturity: MaturityScore[];
+  completeness: { score: number; present: string[]; missing: string[]; gaps: string[]; datasets: number; documents: number; reference_date: string };
+  top_opportunities: Opportunity[];
+  quick_wins: Opportunity[];
+  risks: Risk[];
+  value_by_category: Record<string, number>;
+  hypotheses: number;
 }

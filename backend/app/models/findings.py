@@ -129,7 +129,7 @@ class Opportunity(IdMixin, MissionMixin, ReviewableMixin, Base):
     priority_score: Mapped[float] = mapped_column(Float, default=0)
     priority_rank: Mapped[int | None] = mapped_column(Integer)
     priority_label: Mapped[str | None] = mapped_column(String(8))
-    target_architecture: Mapped[list] = mapped_column(default=list)
+    architecture: Mapped[list] = mapped_column(default=list)
     pilot_plan: Mapped[list] = mapped_column(default=list)
     kpis: Mapped[list] = mapped_column(default=list)
     confidence: Mapped[float] = mapped_column(Float, default=0.5)

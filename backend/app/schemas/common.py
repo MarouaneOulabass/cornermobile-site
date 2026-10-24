@@ -119,6 +119,7 @@ class MissionStats(BaseModel):
     opportunities_priority: int = 0
     validated_share: float = 0.0
     annual_value_mad: float = 0.0
+    analysis_confidence: float | None = None
     alerts: list[str] = Field(default_factory=list)
     progress: float = 0.0
 

@@ -39,6 +39,7 @@ from app.schemas.analysis import (
     ValidationOut,
 )
 from app.services import audit_log
+from app.services.business_case import recompute_mission
 from app.services.pipeline import create_analysis_job
 from app.services.review import COMMENTABLE, add_comment, apply_review, history, load_target
 
@@ -403,6 +404,10 @@ def add_evidence(body: EvidenceIn, ctx: MissionCtx, db: DB) -> EvidenceWithDoc:
 def review(target_type: str, target_id: uuid.UUID, body: ReviewIn, ctx: MissionCtx, db: DB) -> ValidationOut:
     ctx.require_write()
     record = apply_review(db, ctx, target_type, target_id, body.status, body.comment, body.changes)
+    if target_type in (TargetType.assumption, TargetType.opportunity, TargetType.pain_point):
+        # A changed hypothesis, category, effort or criticality moves ROI, scores and P1/P2/P3 labels.
+        db.flush()
+        recompute_mission(db, db.merge(ctx.mission))
     db.commit()
     return ValidationOut.model_validate(record)
 

@@ -50,7 +50,7 @@ def mission_stats(db: Session, mission: AuditMission) -> MissionStats:
         ).all()
     )
     pains = db.execute(
-        select(PainPoint.criticality, PainPoint.validation_status).where(
+        select(PainPoint.criticality, PainPoint.validation_status, PainPoint.confidence).where(
             PainPoint.mission_id == mid, PainPoint.validation_status != ValidationStatus.rejete
         )
     ).all()
@@ -90,6 +90,7 @@ def mission_stats(db: Session, mission: AuditMission) -> MissionStats:
         opportunities_priority=sum(1 for o in opps if o.priority_label == "P1"),
         validated_share=round(validated_share, 3),
         annual_value_mad=round(value),
+        analysis_confidence=round(sum(p.confidence for p in pains) / len(pains), 3) if pains else None,
         alerts=alerts,
         progress=round(progress, 3),
     )

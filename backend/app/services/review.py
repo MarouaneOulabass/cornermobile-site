@@ -71,9 +71,9 @@ EDITABLE: dict[str, set[str]] = {
         "department",
         "kpis",
         "pilot_plan",
-        "target_architecture",
+        "architecture",
     },
-    TargetType.assumption: {"value", "label", "source", "confidence"},
+    TargetType.assumption: {"value", "label", "source", "confidence", "nature"},
     TargetType.risk: {"title", "description", "severity", "likelihood", "exposure_mad_per_year"},
     TargetType.recommendation: {"title", "text"},
     TargetType.roadmap_item: {
@@ -112,6 +112,22 @@ def apply_review(
     unknown = set(changes) - allowed
     if unknown:
         raise HTTPException(422, f"Champs non modifiables : {', '.join(sorted(unknown))}")
+    if target_type == TargetType.assumption and "value" in changes:
+        try:
+            value = float(changes["value"])
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(422, "La valeur doit être un nombre") from exc
+        if (item.min_value is not None and value < item.min_value) or (
+            item.max_value is not None and value > item.max_value
+        ):
+            raise HTTPException(422, f"Valeur hors bornes [{item.min_value} ; {item.max_value}]")
+        changes = {**changes, "value": value}
+    if (
+        target_type == TargetType.assumption
+        and "nature" in changes
+        and changes["nature"] not in ("fait", "calcul", "hypothese")
+    ):
+        raise HTTPException(422, "Nature invalide")
     diffs = {}
     for field, value in changes.items():
         before = getattr(item, field)

@@ -42,6 +42,8 @@ class AuditMission(IdMixin, TenantMixin, Base):
     created_by_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, ForeignKey("users.id", ondelete="SET NULL"))
     # Mission-level parameters reused across business cases (e.g. loaded hourly cost).
     parameters: Mapped[dict] = mapped_column(default=dict)
+    # Computed by the analysis: maturity scores, data completeness, gaps.
+    insights: Mapped[dict] = mapped_column(default=dict)
 
     organization: Mapped[Organization] = relationship(back_populates="missions")  # noqa: F821
 
