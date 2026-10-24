@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import auth, documents, missions, orgs
+from app.api.routes import analysis, auth, documents, missions, orgs
 from app.config import get_settings
 from app.security import configure_logging
 
@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
     def health() -> dict:
         return {"status": "ok"}
 
-    for module in (auth, orgs, missions, documents):
+    for module in (auth, orgs, missions, documents, analysis):
         app.include_router(module.router, prefix="/api")
     return app
 

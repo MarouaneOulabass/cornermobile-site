@@ -50,3 +50,33 @@ export const DOC_STATUS_LABELS: Record<string, [string, Tone]> = {
 };
 
 export const METHOD_LABELS: Record<string, string> = { regles: "règles", llm: "IA", manuel: "manuel" };
+
+export const NODE_KINDS: Record<string, { label: string; color: string; bg: string; column: number }> = {
+  department: { label: "Équipe", color: "#1d4ed8", bg: "#dbeafe", column: 0 },
+  role: { label: "Rôle", color: "#4338ca", bg: "#e0e7ff", column: 0 },
+  process: { label: "Processus", color: "#15803d", bg: "#dcfce7", column: 1 },
+  data: { label: "Donnée", color: "#0f766e", bg: "#ccfbf1", column: 2 },
+  kpi: { label: "KPI", color: "#7e22ce", bg: "#f3e8ff", column: 2 },
+  tool: { label: "Outil", color: "#374151", bg: "#f3f4f6", column: 3 },
+  sla: { label: "SLA / obligation", color: "#b91c1c", bg: "#fee2e2", column: 4 },
+  contract: { label: "Contrat", color: "#b45309", bg: "#ffedd5", column: 5 },
+};
+
+export const RELATION_LABELS: Record<string, string> = {
+  uses: "utilise",
+  consumes: "consomme",
+  produces: "produit",
+  depends_on: "dépend de",
+  imposes: "impose",
+  requires_validation: "requiert une validation",
+  generates_reentry: "génère une ressaisie",
+  duplicated_in: "dupliquée dans",
+  owns: "pilote",
+};
+
+export const EVIDENCE_KIND_LABELS: Record<string, [string, Tone]> = {
+  excerpt: ["Extrait", "info"],
+  rows: ["Lignes", "info"],
+  aggregate: ["Calcul", "value"],
+  document: ["Document", "neutral"],
+};

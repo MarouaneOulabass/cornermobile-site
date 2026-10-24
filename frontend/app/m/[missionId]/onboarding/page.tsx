@@ -5,6 +5,7 @@ import { useState } from "react";
 import { mutate } from "swr";
 import { useMission } from "@/components/shell/MissionContext";
 import { UploadPanel } from "@/components/sources/UploadPanel";
+import { AnalyzeButton } from "@/components/AnalyzeButton";
 import { Button, Card, ErrorBox, PageHeader, Pill } from "@/components/ui";
 import { api } from "@/lib/api";
 import type { InterviewItem, Mission, Organization } from "@/lib/types";
@@ -184,6 +185,12 @@ export default function OnboardingPage() {
         <InterviewsCard mission={mission} />
         <Card title="4. Import des sources">
           <UploadPanel missionId={mission.id} />
+        </Card>
+        <Card title="5. Lancement de l'analyse">
+          <p className="mb-3 text-sm text-muted">
+            L&apos;analyse reconstruit l&apos;organisation, les processus et le business graph, détecte les irritants à partir des preuves, chiffre les opportunités et propose une roadmap. Tout reste modifiable et traçable.
+          </p>
+          <AnalyzeButton label={mission.analysis_version ? "Relancer l'analyse" : "Lancer l'analyse"} />
         </Card>
       </div>
     </>

@@ -205,3 +205,101 @@ export interface LibraryStats {
   tables: number;
   rows: number;
 }
+
+export interface Evidence {
+  id: string;
+  document_id: string | null;
+  kind: "excerpt" | "rows" | "aggregate" | "document";
+  locator: { lines?: [number, number]; table_id?: string; table?: string; rows?: number[]; row_count?: number; columns?: string[] };
+  excerpt: string;
+  summary: string;
+  value: Record<string, unknown>;
+  relevance: number;
+  origin: "engine" | "user";
+  detector: string | null;
+  filename: string | null;
+  path: string | null;
+  category: string | null;
+}
+
+export interface Validation {
+  id: string;
+  target_type: string;
+  target_id: string;
+  status: ValidationStatus;
+  comment: string | null;
+  changes: Record<string, { before: unknown; after: unknown }>;
+  user_name: string | null;
+  created_at: string;
+}
+
+export interface Comment {
+  id: string;
+  target_type: string;
+  target_id: string;
+  kind: "comment" | "contestation";
+  body: string;
+  user_name: string | null;
+  resolved: boolean;
+  created_at: string;
+}
+
+export interface GraphNode {
+  id: string;
+  kind: string;
+  key: string;
+  label: string;
+  properties: Record<string, unknown>;
+  origin: "engine" | "user";
+  x: number | null;
+  y: number | null;
+}
+
+export interface GraphEdge {
+  id: string;
+  source_id: string;
+  target_id: string;
+  relation: string;
+  label: string | null;
+  weight: number;
+  properties: Record<string, unknown>;
+  origin: "engine" | "user";
+  evidence_count: number;
+}
+
+export interface Graph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+export interface ProcessStep {
+  id: string;
+  ordinal: number;
+  label: string;
+  tool: string | null;
+  is_manual: boolean;
+  is_reentry: boolean;
+  requires_validation: boolean;
+  line: number | null;
+}
+
+export interface Process {
+  id: string;
+  name: string;
+  description: string | null;
+  owner_department: string | null;
+  owner_defined: boolean;
+  tools: string[];
+  inputs: string[];
+  outputs: string[];
+  cycle_time_minutes: number | null;
+  confidence: number;
+  source_document_id: string | null;
+  validation_status: ValidationStatus;
+  edited_fields: string[];
+  generated: Record<string, unknown>;
+  steps: ProcessStep[];
+  pain_points: number;
+  pain_points_critical: number;
+  evidence_count: number;
+}
