@@ -118,7 +118,7 @@ demo-data/                   jeu de démonstration (ne pas modifier)
 
 ### Windows natif (PowerShell)
 
-Seuls **Node 22+** et **PostgreSQL 16** sont nécessaires (pas de Python, pas de Docker, pas de bibliothèque
+Seuls **Node 22+** et **PostgreSQL 16+** (17 vérifié) sont nécessaires (pas de Python, pas de Docker, pas de bibliothèque
 système : le PDF est produit en JavaScript avec des polices embarquées).
 
 ```powershell
@@ -138,7 +138,7 @@ cd auditflow
 npm ci
 
 # 3. Bases de données (une fois ; demande le mot de passe « postgres »)
-$pg = "C:\Program Files\PostgreSQL\16\bin"
+$pg = "C:\Program Files\PostgreSQL\16\bin"   # adapter au numéro de version installé (ex. 17)
 & "$pg\psql.exe" -U postgres -c "CREATE USER auditflow WITH PASSWORD 'auditflow' CREATEDB;"
 & "$pg\createdb.exe" -U postgres -O auditflow auditflow
 & "$pg\createdb.exe" -U postgres -O auditflow auditflow_test
@@ -380,8 +380,7 @@ prudentes que le kit (ratio médian ≈ 0,5), totaux proches (1,60 / 1,37 / 2,06
 
 Limites : le kit annonce « 40+ sources » mais il y en a 37/37/38 hors corrigé ; procédures et emails du kit très
 répétitifs (le signal vient surtout des CSV) ; Clerk, Vercel Blob, l'AI Gateway et le déploiement Vercel n'ont pas
-été exercés avec de vraies clés (tests et e2e en mode local) ; la CI ne se déclenche que sur `main`/`master` et les
-pull requests ; pas d'OCR, pas de connecteurs ERP (hors périmètre MVP, §17).
+été exercés avec de vraies clés (tests et e2e en mode local) ; pas d'OCR, pas de connecteurs ERP (hors périmètre MVP, §17).
 
 Pistes : premier déploiement Vercel (Neon + Clerk + Blob) et passage de l'e2e en mode Clerk, invitations
 d'utilisateurs, OCR des PDF scannés, connecteurs ERP, juge LLM optionnel pour la qualité rédactionnelle de la

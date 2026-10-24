@@ -28,7 +28,7 @@ Entièrement en TypeScript, déployée sur Vercel :
 
 ## Démarrage sous Windows (PowerShell)
 
-Prérequis : **Node 22+** et **PostgreSQL 16**. Rien d'autre (pas de Python, pas de Docker, pas de bibliothèque
+Prérequis : **Node 22+** et **PostgreSQL 16+** (17 vérifié). Rien d'autre (pas de Python, pas de Docker, pas de bibliothèque
 système pour les PDF).
 
 ```powershell
@@ -46,7 +46,7 @@ cd auditflow
 npm ci
 
 # 3. Bases locales (une fois ; demande le mot de passe « postgres »)
-$pg = "C:\Program Files\PostgreSQL\16\bin"
+$pg = "C:\Program Files\PostgreSQL\16\bin"   # adapter au numéro de version installé (ex. 17)
 & "$pg\psql.exe" -U postgres -c "CREATE USER auditflow WITH PASSWORD 'auditflow' CREATEDB;"
 & "$pg\createdb.exe" -U postgres -O auditflow auditflow
 & "$pg\createdb.exe" -U postgres -O auditflow auditflow_test

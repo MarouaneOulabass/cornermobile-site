@@ -2,8 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    # AuditFlow lives on its own branch, independent from `master` (see CLAUDE.md §1).
+    branches: [main, master, claude/new-session-s0mlha]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
