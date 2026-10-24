@@ -63,7 +63,7 @@ export async function runJob(jobId: string): Promise<void> {
     await db.exec(sql`
       UPDATE jobs SET status = ${JobStatus.done}, progress = 100, finished_at = now(),
         message = ${(result as { message?: string }).message ?? "Terminé"},
-        payload = payload || ${sql.json({ result })}
+        payload = (payload::jsonb || ${sql.json({ result })}::jsonb)::json
       WHERE id = ${job.id}`);
   } catch (error) {
     const e = error as Error;

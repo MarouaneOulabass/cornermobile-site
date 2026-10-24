@@ -53,8 +53,8 @@ CREATE TABLE scoring_models (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations (id) ON DELETE CASCADE,
   name varchar(120) NOT NULL,
-  weights jsonb NOT NULL DEFAULT '{}',
-  penalties jsonb NOT NULL DEFAULT '{}',
+  weights json NOT NULL DEFAULT '{}',
+  penalties json NOT NULL DEFAULT '{}',
   is_active boolean NOT NULL DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -69,7 +69,7 @@ CREATE TABLE audit_log (
   action varchar(80) NOT NULL,
   entity_type varchar(40),
   entity_id varchar(64),
-  details jsonb NOT NULL DEFAULT '{}',
+  details json NOT NULL DEFAULT '{}',
   at timestamptz NOT NULL DEFAULT now(),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -84,15 +84,15 @@ CREATE TABLE audit_missions (
   organization_id uuid NOT NULL REFERENCES organizations (id) ON DELETE CASCADE,
   name varchar(200) NOT NULL,
   status varchar(16) NOT NULL DEFAULT 'draft',
-  objectives jsonb NOT NULL DEFAULT '[]',
-  scope jsonb NOT NULL DEFAULT '[]',
-  interview_checklist jsonb NOT NULL DEFAULT '[]',
+  objectives json NOT NULL DEFAULT '[]',
+  scope json NOT NULL DEFAULT '[]',
+  interview_checklist json NOT NULL DEFAULT '[]',
   analysis_version integer NOT NULL DEFAULT 0,
   analyzed_at timestamptz,
   published_at timestamptz,
   created_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  parameters jsonb NOT NULL DEFAULT '{}',
-  insights jsonb NOT NULL DEFAULT '{}',
+  parameters json NOT NULL DEFAULT '{}',
+  insights json NOT NULL DEFAULT '{}',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -173,7 +173,7 @@ CREATE TABLE documents (
   category_confidence double precision,
   classification_method varchar(32),
   title varchar(300),
-  meta jsonb NOT NULL DEFAULT '{}',
+  meta json NOT NULL DEFAULT '{}',
   text text,
   line_count integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -188,9 +188,9 @@ CREATE TABLE data_tables (
   mission_id uuid NOT NULL REFERENCES audit_missions (id) ON DELETE CASCADE,
   document_id uuid NOT NULL REFERENCES documents (id) ON DELETE CASCADE,
   name varchar(255) NOT NULL,
-  columns jsonb NOT NULL DEFAULT '[]',
-  column_types jsonb NOT NULL DEFAULT '{}',
-  rows jsonb NOT NULL DEFAULT '[]',
+  columns json NOT NULL DEFAULT '[]',
+  column_types json NOT NULL DEFAULT '{}',
+  rows json NOT NULL DEFAULT '[]',
   row_count integer NOT NULL DEFAULT 0,
   truncated boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -208,7 +208,7 @@ CREATE TABLE document_chunks (
   text text NOT NULL,
   start_line integer NOT NULL,
   end_line integer NOT NULL,
-  embedding jsonb NOT NULL DEFAULT '[]',
+  embedding json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -225,17 +225,17 @@ CREATE TABLE processes (
   description text,
   owner_department varchar(120),
   owner_defined boolean NOT NULL DEFAULT false,
-  tools jsonb NOT NULL DEFAULT '[]',
-  inputs jsonb NOT NULL DEFAULT '[]',
-  outputs jsonb NOT NULL DEFAULT '[]',
+  tools json NOT NULL DEFAULT '[]',
+  inputs json NOT NULL DEFAULT '[]',
+  outputs json NOT NULL DEFAULT '[]',
   cycle_time_minutes double precision,
   confidence double precision NOT NULL DEFAULT 0.5,
   source_document_id uuid REFERENCES documents (id) ON DELETE SET NULL,
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -265,7 +265,7 @@ CREATE TABLE graph_nodes (
   kind varchar(24) NOT NULL,
   key varchar(160) NOT NULL,                      -- stable natural key, e.g. "tool:excel"
   label varchar(200) NOT NULL,
-  properties jsonb NOT NULL DEFAULT '{}',
+  properties json NOT NULL DEFAULT '{}',
   origin varchar(16) NOT NULL DEFAULT 'engine',   -- engine | user
   x double precision,
   y double precision,
@@ -283,7 +283,7 @@ CREATE TABLE graph_edges (
   relation varchar(32) NOT NULL,
   label varchar(200),
   weight double precision NOT NULL DEFAULT 1,
-  properties jsonb NOT NULL DEFAULT '{}',
+  properties json NOT NULL DEFAULT '{}',
   origin varchar(16) NOT NULL DEFAULT 'engine',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -298,10 +298,10 @@ CREATE TABLE evidence (
   mission_id uuid NOT NULL REFERENCES audit_missions (id) ON DELETE CASCADE,
   document_id uuid REFERENCES documents (id) ON DELETE CASCADE,
   kind varchar(16) NOT NULL,                      -- excerpt | rows | aggregate | document
-  locator jsonb NOT NULL DEFAULT '{}',
+  locator json NOT NULL DEFAULT '{}',
   excerpt text NOT NULL DEFAULT '',
   summary text NOT NULL DEFAULT '',
-  value jsonb NOT NULL DEFAULT '{}',
+  value json NOT NULL DEFAULT '{}',
   relevance double precision NOT NULL DEFAULT 0.5,
   origin varchar(16) NOT NULL DEFAULT 'engine',   -- engine | user
   detector varchar(64),
@@ -350,8 +350,8 @@ CREATE TABLE pain_points (
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -368,7 +368,7 @@ CREATE TABLE metrics (
   unit varchar(24) NOT NULL DEFAULT '',
   nature varchar(16) NOT NULL DEFAULT 'calcul',   -- fait | calcul | hypothese
   formula text NOT NULL DEFAULT '',
-  inputs jsonb NOT NULL DEFAULT '{}',
+  inputs json NOT NULL DEFAULT '{}',
   ordinal integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -387,11 +387,12 @@ CREATE TABLE risks (
   severity varchar(16) NOT NULL,
   exposure_mad_per_year double precision,
   pain_point_id uuid REFERENCES pain_points (id) ON DELETE SET NULL,
+  ordinal integer NOT NULL DEFAULT 0,
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -409,19 +410,19 @@ CREATE TABLE opportunities (
   department varchar(120),
   effort varchar(16) NOT NULL,
   target_delivery varchar(40),
-  scores jsonb NOT NULL DEFAULT '{}',
+  scores json NOT NULL DEFAULT '{}',
   priority_score double precision NOT NULL DEFAULT 0,
   priority_rank integer,
   priority_label varchar(8),
-  architecture jsonb NOT NULL DEFAULT '[]',
-  pilot_plan jsonb NOT NULL DEFAULT '[]',
-  kpis jsonb NOT NULL DEFAULT '[]',
+  architecture json NOT NULL DEFAULT '[]',
+  pilot_plan json NOT NULL DEFAULT '[]',
+  kpis json NOT NULL DEFAULT '[]',
   confidence double precision NOT NULL DEFAULT 0.5,
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -454,8 +455,8 @@ CREATE TABLE assumptions (
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -468,8 +469,8 @@ CREATE TABLE roi_models (
   mission_id uuid NOT NULL REFERENCES audit_missions (id) ON DELETE CASCADE,
   opportunity_id uuid NOT NULL UNIQUE REFERENCES opportunities (id) ON DELETE CASCADE,
   model_type varchar(32) NOT NULL DEFAULT 'composite',
-  results jsonb NOT NULL DEFAULT '{}',
-  breakdown jsonb NOT NULL DEFAULT '[]',
+  results json NOT NULL DEFAULT '{}',
+  breakdown json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -486,8 +487,8 @@ CREATE TABLE recommendations (
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -505,13 +506,13 @@ CREATE TABLE roadmap_items (
   start_week integer NOT NULL DEFAULT 0,
   duration_weeks integer NOT NULL DEFAULT 4,
   owner varchar(120),
-  depends_on jsonb NOT NULL DEFAULT '[]',
+  depends_on json NOT NULL DEFAULT '[]',
   ordinal integer NOT NULL DEFAULT 0,
   validation_status varchar(16) NOT NULL DEFAULT 'a_verifier',
   validated_at timestamptz,
   validated_by_id uuid REFERENCES users (id) ON DELETE SET NULL,
-  generated jsonb NOT NULL DEFAULT '{}',
-  edited_fields jsonb NOT NULL DEFAULT '[]',
+  generated json NOT NULL DEFAULT '{}',
+  edited_fields json NOT NULL DEFAULT '[]',
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -527,7 +528,7 @@ CREATE TABLE validations (
   target_id uuid NOT NULL,
   status varchar(16) NOT NULL,
   comment text,
-  changes jsonb NOT NULL DEFAULT '{}',            -- field -> {before, after}
+  changes json NOT NULL DEFAULT '{}',            -- field -> {before, after}
   user_id uuid REFERENCES users (id) ON DELETE SET NULL,
   user_name varchar(200),
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -580,7 +581,7 @@ CREATE TABLE jobs (
   done integer NOT NULL DEFAULT 0,
   message text,
   error text,
-  payload jsonb NOT NULL DEFAULT '{}',
+  payload json NOT NULL DEFAULT '{}',
   started_at timestamptz,
   finished_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),

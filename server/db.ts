@@ -48,7 +48,7 @@ class Raw {
 export function sql(strings: TemplateStringsArray, ...values: unknown[]): SqlQuery {
   return new SqlQuery(strings, values);
 }
-/** A jsonb parameter (plain JS arrays would otherwise become Postgres arrays). */
+/** A JSON parameter (plain JS arrays would otherwise become Postgres arrays). */
 sql.json = (value: unknown) => new Json(value);
 /** Trusted SQL text (identifiers from code, never user input). */
 sql.raw = (text: string) => new Raw(text);
@@ -95,8 +95,8 @@ export class Db {
   }
 
   /**
-   * Inserts many rows in one statement through jsonb_to_recordset; returns the inserted rows.
-   * `columns` maps each column to its SQL type, e.g. { id: "uuid", value: "double precision", locator: "jsonb" }.
+   * Inserts many rows in one statement through json_to_recordset (json keeps object key order); returns the inserted rows.
+   * `columns` maps each column to its SQL type, e.g. { id: "uuid", value: "double precision", locator: "json" }.
    */
   async insertMany<T = Record<string, unknown>>(
     table: string,
@@ -111,7 +111,7 @@ export class Db {
     const out: T[] = [];
     for (let i = 0; i < rows.length; i += 2000) {
       const batch = rows.slice(i, i + 2000).map((r) => Object.fromEntries(names.map((c) => [c, r[c] ?? null])));
-      const text = `INSERT INTO ${table} (${cols}) SELECT ${cols} FROM jsonb_to_recordset($1::jsonb) AS r(${defs}) RETURNING ${returning}`;
+      const text = `INSERT INTO ${table} (${cols}) SELECT ${cols} FROM json_to_recordset($1::json) AS r(${defs}) RETURNING ${returning}`;
       const result = await this.client.query(text, [JSON.stringify(batch)]);
       out.push(...(result.rows as T[]));
     }

@@ -298,11 +298,16 @@ export function minBy<T>(items: T[], key: (item: T) => number): T | undefined {
   return best;
 }
 
-/** Python's sum() (left-to-right float addition). */
+/** Python ≥ 3.12 sum() over floats: Neumaier-compensated (integer-valued items stay exact either way). */
 export function sum(values: Iterable<number>): number {
-  let total = 0;
-  for (const v of values) total += v;
-  return total;
+  let hi = 0;
+  let lo = 0;
+  for (const x of values) {
+    const t = hi + x;
+    lo += Math.abs(hi) >= Math.abs(x) ? hi - t + x : x - t + hi;
+    hi = t;
+  }
+  return lo && Number.isFinite(lo) ? hi + lo : hi;
 }
 
 /** str.splitlines() for the line terminators the engine meets (\n, \r\n, \r, form feed, unicode separators). */

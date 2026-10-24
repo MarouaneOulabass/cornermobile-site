@@ -26,12 +26,20 @@ describe("database layer", () => {
     expect(await db.query(sql`SELECT * FROM organizations`)).toEqual([]);
   });
 
-  it("bulk inserts through jsonb_to_recordset", async () => {
+  it("bulk inserts through json_to_recordset", async () => {
     const rows = await db.insertMany<{ slug: string }>("organizations", { name: "text", slug: "text", employees: "integer" }, [
       { name: "A", slug: "a", employees: 3 },
       { name: "B", slug: "b" },
     ]);
     expect(rows.map((r) => r.slug)).toEqual(["a", "b"]);
+  });
+
+  it("keeps JSON object keys in insertion order (the UI lists them as the engine wrote them)", async () => {
+    const [org] = await db.insertMany<{ id: string }>("organizations", { name: "text", slug: "text" }, [{ name: "K", slug: "k" }], "id");
+    const weights = { impact: 1, faisabilite: 2, roi: 3, data_readiness: 4 };
+    await db.exec(sql`INSERT INTO scoring_models (organization_id, name, weights) VALUES (${org.id}, 'm', ${sql.json(weights)})`);
+    const row = await db.one<{ weights: Record<string, number> }>(sql`SELECT weights FROM scoring_models WHERE organization_id = ${org.id}`);
+    expect(Object.keys(row.weights)).toEqual(Object.keys(weights));
   });
 });
 

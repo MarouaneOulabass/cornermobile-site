@@ -296,8 +296,8 @@ export class AnalysisContext {
     await this.db.insertMany(
       "evidence",
       {
-        id: "uuid", organization_id: "uuid", mission_id: "uuid", document_id: "uuid", kind: "text", locator: "jsonb", excerpt: "text",
-        summary: "text", value: "jsonb", relevance: "double precision", origin: "text", detector: "text", ordinal: "integer",
+        id: "uuid", organization_id: "uuid", mission_id: "uuid", document_id: "uuid", kind: "text", locator: "json", excerpt: "text",
+        summary: "text", value: "json", relevance: "double precision", origin: "text", detector: "text", ordinal: "integer",
       },
       newEvidence.map((e, i) => ({ ...e, organization_id: this.orgId, mission_id: this.mission.id, ordinal: this.pendingEvidence - newEvidence.length + i })),
       "id",

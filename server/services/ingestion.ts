@@ -221,7 +221,7 @@ export async function processDocument(tx: Db, doc: DocumentRow): Promise<void> {
   await tx.exec(sql`DELETE FROM document_chunks WHERE document_id = ${doc.id}`);
   await tx.insertMany(
     "data_tables",
-    { organization_id: "uuid", mission_id: "uuid", document_id: "uuid", name: "text", columns: "jsonb", column_types: "jsonb", rows: "jsonb", row_count: "integer", truncated: "boolean" },
+    { organization_id: "uuid", mission_id: "uuid", document_id: "uuid", name: "text", columns: "json", column_types: "json", rows: "json", row_count: "integer", truncated: "boolean" },
     parsed.tables.map((t) => ({
       organization_id: doc.organization_id,
       mission_id: doc.mission_id,
@@ -250,7 +250,7 @@ export async function processDocument(tx: Db, doc: DocumentRow): Promise<void> {
   }
   await tx.insertMany(
     "document_chunks",
-    { organization_id: "uuid", mission_id: "uuid", document_id: "uuid", ordinal: "integer", text: "text", start_line: "integer", end_line: "integer", embedding: "jsonb" },
+    { organization_id: "uuid", mission_id: "uuid", document_id: "uuid", ordinal: "integer", text: "text", start_line: "integer", end_line: "integer", embedding: "json" },
     chunkLines(parsed.text).map((c) => ({
       organization_id: doc.organization_id,
       mission_id: doc.mission_id,

@@ -207,7 +207,7 @@ export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promis
   }
   await tx.insertMany(
     "graph_nodes",
-    { id: "uuid", organization_id: "uuid", mission_id: "uuid", key: "text", kind: "text", label: "text", properties: "jsonb", origin: "text" },
+    { id: "uuid", organization_id: "uuid", mission_id: "uuid", key: "text", kind: "text", label: "text", properties: "json", origin: "text" },
     inserts,
     "id",
   );
@@ -233,7 +233,7 @@ export async function persistGraph(ctx: AnalysisContext, ex: Extraction): Promis
   }
   await tx.insertMany(
     "graph_edges",
-    { id: "uuid", organization_id: "uuid", mission_id: "uuid", source_id: "uuid", target_id: "uuid", relation: "text", label: "text", weight: "double precision", properties: "jsonb", origin: "text" },
+    { id: "uuid", organization_id: "uuid", mission_id: "uuid", source_id: "uuid", target_id: "uuid", relation: "text", label: "text", weight: "double precision", properties: "json", origin: "text" },
     edgeInserts,
     "id",
   );

@@ -67,3 +67,28 @@ export interface JobRow {
   finished_at: Date | null;
   created_at: Date;
 }
+
+export interface PainPointRow {
+  id: string;
+  organization_id: string;
+  mission_id: string;
+  code: string;
+  title: string;
+  description: string;
+  type: string;
+  department: string | null;
+  scope: string | null;
+  frequency: string | null;
+  frequency_per_month: number | null;
+  impact: string | null;
+  impact_mad_per_year: number | null;
+  confidence: number;
+  criticality: string;
+  severity: number;
+  is_hypothesis: boolean;
+  process_id: string | null;
+  ordinal: number;
+  validation_status: string;
+  generated: Record<string, unknown>;
+  edited_fields: string[];
+}
