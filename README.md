@@ -6,6 +6,8 @@ processus, détecte les irritants, chiffre les opportunités, propose une roadma
 **Chaque chiffre est relié à sa source** et qualifié de *fait*, *calcul* ou *hypothèse* ; le consultant valide,
 corrige ou rejette chaque conclusion avant publication.
 
+Pour travailler sur le projet (humain ou Claude Code), lire d'abord [`CLAUDE.md`](CLAUDE.md).
+
 Construit à partir du cahier des charges `docs/kit/specs-claude.md` (ordre de construction du §18), de la
 maquette `docs/kit/mockup.html` et du jeu de démonstration `demo-data/` (3 entreprises fictives).
 
@@ -30,16 +32,15 @@ Prérequis : Python 3.11+, [uv](https://docs.astral.sh/uv/), Node 22, PostgreSQL
 ```bash
 # API
 cd backend
+cp .env.example .env                            # base locale, AUDITFLOW_SECRET_KEY=$(openssl rand -hex 32)
 uv sync --extra dev
-export AUDITFLOW_DATABASE_URL=postgresql+psycopg://auditflow:auditflow@localhost:5432/auditflow
-export AUDITFLOW_SECRET_KEY=$(openssl rand -hex 32)
 uv run python -m app.seed --reset --analyze     # migrations + démo analysée (≈ 10 s)
 uv run uvicorn app.main:app --reload            # http://localhost:8000/api/docs
 
 # Web
 cd frontend
 npm ci
-AUDITFLOW_API_URL=http://localhost:8000 npm run dev   # http://localhost:3000
+npm run dev                                     # http://localhost:3000, proxy /api → localhost:8000
 ```
 
 Sans Redis, les traitements tournent dans un thread de l'API (`AUDITFLOW_JOB_BACKEND=thread`) ; en production,
