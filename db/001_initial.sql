@@ -305,6 +305,7 @@ CREATE TABLE evidence (
   relevance double precision NOT NULL DEFAULT 0.5,
   origin varchar(16) NOT NULL DEFAULT 'engine',   -- engine | user
   detector varchar(64),
+  ordinal integer NOT NULL DEFAULT 0,             -- creation order within an analysis run
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
@@ -318,6 +319,7 @@ CREATE TABLE evidence_links (
   target_type varchar(24) NOT NULL,
   target_id uuid NOT NULL,
   stance varchar(12) NOT NULL DEFAULT 'supports',
+  ordinal integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
