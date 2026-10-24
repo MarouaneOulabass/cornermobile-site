@@ -1,0 +1,107 @@
+{
+ "factures.xlsx": {
+  "text": "[Table Factures] colonnes : invoice_id, amount_mad, days_overdue, status\ninvoice_id=INV-1 | amount_mad=1200.5 | days_overdue=12 | status=OVERDUE\ninvoice_id=INV-2 | amount_mad=300 | days_overdue=0 | status=PAID\ninvoice_id=INV-3 | amount_mad=45 | days_overdue=61 | status=OVERDUE\n\n[Table Notes] colonnes : Note\nNote=Relance prévue",
+  "title": "Suivi des factures",
+  "meta": {
+   "sheets": [
+    "Factures",
+    "Notes"
+   ],
+   "rows": 4,
+   "author": "Finance"
+  },
+  "tables": [
+   {
+    "name": "Factures",
+    "columns": [
+     "invoice_id",
+     "amount_mad",
+     "days_overdue",
+     "status"
+    ],
+    "rows": [
+     [
+      "INV-1",
+      "1200.5",
+      "12",
+      "OVERDUE"
+     ],
+     [
+      "INV-2",
+      "300",
+      "0",
+      "PAID"
+     ],
+     [
+      "INV-3",
+      "45",
+      "61",
+      "OVERDUE"
+     ]
+    ]
+   },
+   {
+    "name": "Notes",
+    "columns": [
+     "Note"
+    ],
+    "rows": [
+     [
+      "Relance prévue"
+     ]
+    ]
+   }
+  ]
+ },
+ "procedure.docx": {
+  "text": "# Procédure achats\nObjectif : sécuriser les achats urgents.\n## Étapes\n1. Demande dans Excel\n2. Validation par email\n\n[Table Tableau 1] colonnes : Étape, Outil\nÉtape=Demande | Outil=Excel\nÉtape=Validation | Outil=Email",
+  "title": "Procédure achats",
+  "meta": {
+   "author": "Qualité",
+   "tables": 1
+  },
+  "tables": [
+   {
+    "name": "Tableau 1",
+    "columns": [
+     "Étape",
+     "Outil"
+    ],
+    "rows": [
+     [
+      "Demande",
+      "Excel"
+     ],
+     [
+      "Validation",
+      "Email"
+     ]
+    ]
+   }
+  ]
+ },
+ "relance.eml": {
+  "text": "Subject: Relance facture impayée\nFrom: Karim <karim@atlaspro.ma>\nDate: Mon, 05 Oct 2026 09:00:00 +0000\n\nBonjour,\nLa facture INV-3 est échue depuis 61 jours.\nMerci.",
+  "title": "Relance facture impayée",
+  "meta": {
+   "from": "Karim <karim@atlaspro.ma>",
+   "to": "finance@atlaspro.ma",
+   "subject": "Relance facture impayée",
+   "date": "Mon, 05 Oct 2026 09:00:00 +0000",
+   "email": true,
+   "attachments": [
+    "INV-3.pdf"
+   ]
+  },
+  "tables": []
+ },
+ "rapport.pdf": {
+  "text": "[Page 1]\nRapport mensuel\nChiffre d affaires : 9,8 M MAD\nEcart ERP : 3 corrections",
+  "title": "Rapport mensuel",
+  "meta": {
+   "pages": 1,
+   "author": "Direction"
+  },
+  "tables": []
+ }
+}
