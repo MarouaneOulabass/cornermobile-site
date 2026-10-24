@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Functional colours (spec §10): green = value/validated, orange = to verify,
+   red = risk/criticality, blue = information/structure. */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-canvas: #f5f7fb;
+  --color-panel: #ffffff;
+  --color-ink: #18212f;
+  --color-muted: #6b7280;
+  --color-line: #e5e7eb;
+  --color-nav: #111827;
+  --color-nav-2: #1f2937;
+  --color-nav-hover: #273449;
+
+  --color-info: #2563eb;
+  --color-info-soft: #dbeafe;
+  --color-value: #15803d;
+  --color-value-soft: #dcfce7;
+  --color-check: #b45309;
+  --color-check-soft: #ffedd5;
+  --color-risk: #b91c1c;
+  --color-risk-soft: #fee2e2;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-feature-settings: "tnum" 1;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-info);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-wider text-muted;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-panel p-4 shadow-[0_1px_2px_rgba(0,0,0,0.03)];
+  }
+  .table-base {
+    @apply w-full border-collapse overflow-hidden rounded-xl border border-line bg-panel text-sm;
+  }
+  .table-base th {
+    @apply bg-gray-50 px-3 py-2.5 text-left text-xs font-semibold text-muted;
+  }
+  .table-base td {
+    @apply border-t border-line px-3 py-2.5 align-top;
+  }
+  .input {
+    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-info;
+  }
+  .label {
+    @apply mb-1 block text-xs font-medium text-muted;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

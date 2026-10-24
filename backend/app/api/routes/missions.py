@@ -7,6 +7,7 @@ from app.models import AuditMission
 from app.schemas.common import MissionOut, MissionPatch, MissionStats
 from app.services import audit_log
 from app.services.missions import delete_mission, mission_stats
+from app.services.summary import ExecSummary, executive_summary
 
 router = APIRouter(prefix="/missions/{mission_id}", tags=["missions"])
 
@@ -19,6 +20,11 @@ def get_mission(ctx: MissionCtx) -> AuditMission:
 @router.get("/stats", response_model=MissionStats)
 def get_stats(ctx: MissionCtx, db: DB) -> MissionStats:
     return mission_stats(db, ctx.mission)
+
+
+@router.get("/summary", response_model=ExecSummary)
+def get_summary(ctx: MissionCtx, db: DB) -> ExecSummary:
+    return executive_summary(db, db.merge(ctx.mission))
 
 
 @router.patch("", response_model=MissionOut)
