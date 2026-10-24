@@ -223,3 +223,50 @@ def test_sorting(client, analyzed):
     assert by_value == sorted(by_value, reverse=True)
     by_payback = [o["roi"]["payback_months"] or 1e9 for o in opps(client, mission, headers, sort="payback")]
     assert by_payback == sorted(by_payback)
+
+
+def test_monthly_volume_follows_the_period_assumption(client, analyzed):
+    mission = analyzed("atlaspro-distribution")
+    headers = login(client, "consultant@auditflow.demo")
+    copilot = next(o for o in opps(client, mission, headers) if o["title"] == "Copilote de devis")
+    base = copilot["roi"]["gross_annual_value"]
+    sim = client.post(
+        f"/api/missions/{mission.id}/opportunities/{copilot['id']}/simulate",
+        json={"overrides": {"period_months": 2}},
+        headers=headers,
+    ).json()
+    assert sim["results"]["gross_annual_value"] == pytest.approx(base / 2, rel=1e-3)
+    detail = client.get(f"/api/missions/{mission.id}/opportunities/{copilot['id']}", headers=headers).json()
+    per_period = next(a for a in detail["assumptions"] if a["key"] == "per_period")
+    resp = client.post(
+        f"/api/missions/{mission.id}/review/assumption/{per_period['id']}",
+        json={"changes": {"value": 3}},
+        headers=headers,
+    )
+    assert resp.status_code == 422
+
+
+def test_every_assumption_shown_enters_a_formula(client, analyzed):
+    mission = analyzed("atlaspro-distribution")
+    headers = login(client, "consultant@auditflow.demo")
+    for o in opps(client, mission, headers):
+        detail = client.get(f"/api/missions/{mission.id}/opportunities/{o['id']}", headers=headers).json()
+        for a in detail["assumptions"]:
+            if a["key"] in ("per_period",):
+                continue
+            bump = (
+                a["value"] * 1.5 + 1
+                if a["max_value"] is None
+                else min(a["max_value"], a["value"] * 1.5 + 0.01)
+            )
+            sim = client.post(
+                f"/api/missions/{mission.id}/opportunities/{o['id']}/simulate",
+                json={"overrides": {a["key"]: bump}},
+                headers=headers,
+            ).json()
+            moved = sim["results"] != o["roi"] and (
+                sim["results"]["gross_annual_value"] != o["roi"]["gross_annual_value"]
+                or sim["results"]["project_cost"] != o["roi"]["project_cost"]
+                or sim["results"]["annual_solution_cost"] != o["roi"]["annual_solution_cost"]
+            )
+            assert moved, f"{o['title']}: {a['key']} changes nothing"

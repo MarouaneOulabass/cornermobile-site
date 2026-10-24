@@ -24,10 +24,15 @@ def scoring_model(db: Session, organization_id: uuid.UUID) -> tuple[dict, dict]:
     return {**DEFAULT_WEIGHTS, **(model.weights or {})}, {**DEFAULT_PENALTIES, **(model.penalties or {})}
 
 
+DERIVED = {"per_period"}  # computed from other assumptions, never edited directly
+
+
 def values_of(opp: Opportunity, overrides: dict[str, float] | None = None) -> dict[str, float]:
     values = {a.key: a.value for a in opp.assumptions}
     if overrides:
-        values.update({k: float(v) for k, v in overrides.items() if k in values})
+        values.update({k: float(v) for k, v in overrides.items() if k in values and k not in DERIVED})
+    if values.get("period_months"):
+        values["per_period"] = 1 / values["period_months"]
     return values
 
 

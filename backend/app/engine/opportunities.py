@@ -2141,6 +2141,18 @@ TEMPLATES: list[tuple[str, Callable[[Env, Finding], OpportunitySpec]]] = [
 ]
 
 
+def used_keys(spec: OpportunitySpec) -> set[str]:
+    """Assumptions that actually enter a formula: an input that changes nothing is never shown."""
+    keys = {"project_cost", "run_cost_month"}
+    for line in spec.lines:
+        keys.update(line.factors)
+        if line.kind == "time":
+            keys.add(line.cost_key or "hourly_cost_mad")
+    if "per_period" in keys:
+        keys.add("period_months")
+    return keys
+
+
 def generate(env: Env, findings: list[Finding]) -> list[OpportunitySpec]:
     specs: dict[str, OpportunitySpec] = {}
     for f in findings:
@@ -2155,6 +2167,7 @@ def generate(env: Env, findings: list[Finding]) -> list[OpportunitySpec]:
             continue
         if f.is_hypothesis:
             spec.data_readiness = min(spec.data_readiness, 0.3)
+        spec.assumptions = [a for a in spec.assumptions if a.key in used_keys(spec)]
         spec.target_delivery = spec.target_delivery or DELIVERY[EffortLevel(spec.effort)]
         specs[spec.code] = spec
     return list(specs.values())

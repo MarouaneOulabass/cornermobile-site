@@ -112,6 +112,10 @@ def apply_review(
     unknown = set(changes) - allowed
     if unknown:
         raise HTTPException(422, f"Champs non modifiables : {', '.join(sorted(unknown))}")
+    if target_type == TargetType.assumption and "value" in changes and item.key == "per_period":
+        raise HTTPException(
+            422, "Valeur dérivée de la période : modifiez la période couverte par les données"
+        )
     if target_type == TargetType.assumption and "value" in changes:
         try:
             value = float(changes["value"])
